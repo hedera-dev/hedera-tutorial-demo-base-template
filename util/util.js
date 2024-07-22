@@ -81,33 +81,35 @@ async function createLogger({
     function log(...strings) {
         logger.step += 1;
         logger.lastMsg = ([...strings])[0];
-        console.log(...strings);
+        return console.log(...strings);
     }
 
     function logSection(...strings) {
         logger.step += 1;
         logger.lastMsg = ([...strings])[0];
-        blueLog(...strings);
+        return blueLog(...strings);
     }
 
     function logStart(...strings) {
-        logSection(...strings);
+        const retVal = logSection(...strings);
         const msg = getStartMessage();
         logger.stats.lastStart = Math.max(msg.time, logger.stats.lastStart);
         logger.stats.firstStart = Math.min(msg.time, logger.stats.firstStart);
         logger.stats.countStart += 1;
         saveLoggerStats(logger);
         metricsTrackOnHcs(msg);
+        return retVal;
     }
 
     function logComplete(...strings) {
-        logSection(...strings);
+        const retVal = logSection(...strings);
         const msg = getCompleteMessage();
         logger.stats.lastComplete = Math.max(msg.time, logger.stats.lastComplete);
         logger.stats.firstComplete = Math.min(msg.time, logger.stats.firstComplete);
         logger.stats.countComplete += 1;
         saveLoggerStats(logger);
         metricsTrackOnHcs(msg);
+        return retVal;
     }
 
     function logError(...strings) {
@@ -117,7 +119,7 @@ async function createLogger({
         logger.stats.firstError = Math.min(msg.time, logger.stats.firstError);
         logger.stats.countError += 1;
         saveLoggerStats(logger);
-        log(...strings);
+        return log(...strings);
     }
 
     function getStartMessage() {
@@ -171,7 +173,7 @@ async function saveLoggerStats(logger) {
 
 function blueLog(...strings) {
     console.log('');
-    console.log(ANSI_ESCAPE_CODE_BLUE, '🔵', ...strings, HELLIP_CHAR);
+    return console.log(ANSI_ESCAPE_CODE_BLUE, '🔵', ...strings, HELLIP_CHAR);
 }
 
 function convertTransactionIdForMirrorNodeApi(txId) {
@@ -327,18 +329,22 @@ async function metricsTrackOnHcs({
     cat,
     v,
     action,
-    detail
+    detail,
+    time,
 }) {
     if (typeof cat !== 'string' ||
         typeof v !== 'string' ||
         typeof action !== 'string' ||
-        typeof detail !== 'string') {
+        typeof detail !== 'string' ||
+        typeof time !== 'number') {
         throw new Error('Missing params');
     }
     if (['start', 'complete', 'error'].indexOf(cat) < 0) {
         throw new Error('Invalid category:', cat);
     }
-    const timeStamp = Date.now();
+    if (isNaN(time) || time < 1) {
+        throw new Error('Invalid time:', time);
+    }
 
     let client;
 
@@ -360,7 +366,7 @@ async function metricsTrackOnHcs({
             v,
             action,
             detail,
-            time: timeStamp,
+            time,
         };
         metricsMessages.push(metricsMessage);
 

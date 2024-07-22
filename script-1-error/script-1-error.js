@@ -47,8 +47,6 @@ async function script1Error() {
 }
 
 script1Error().catch((ex) => {
-    if (client) {
-        client.close();
-    }
-    logger.logError(ex);
+    client && client.close();
+    logger ? logger.logError(ex) : console.error(ex);
 });

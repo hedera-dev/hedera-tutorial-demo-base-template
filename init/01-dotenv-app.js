@@ -10,7 +10,7 @@ const {
 } = require('@hashgraph/sdk');
 const dotenv = require('dotenv');
 const {
-    metricsTrackOnHcs,
+    createLogger,
 } = require('../util/util.js');
 
 const DEFAULT_VALUES = {
@@ -20,8 +20,14 @@ const DEFAULT_VALUES = {
     numAccountsMinimum: 1,
 };
 
+let logger;
+
 async function initDotEnvForApp() {
-    metricsTrackOnHcs('initDotEnvForApp', 'begin');
+    logger = await createLogger({
+        scriptId: 'initDotEnvForApp',
+        scriptCategory: 'setup',
+    });
+    logger.logStart('Initialising .env file');
 
     // prompt for inputs
     const {
@@ -34,9 +40,9 @@ async function initDotEnvForApp() {
         console.log('OK, overwriting .env file');
         const fileName = DEFAULT_VALUES.dotEnvFilePath;
         await fs.writeFile(fileName, dotEnvText);
-        metricsTrackOnHcs('initDotEnvForApp', 'overwrite');
+        logger.logComplete('Overwritten .env file');
     } else {
-        console.log('OK, leaving current .env file as it was');
+        logger.logComplete('Leaving .env as it was');
     }
 }
 
@@ -398,4 +404,6 @@ async function promptInputs() {
     };
 }
 
-initDotEnvForApp();
+initDotEnvForApp().catch((ex) => {
+    logger ? logger.logError(ex) : console.error(ex);
+});
