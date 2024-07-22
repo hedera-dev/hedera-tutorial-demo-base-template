@@ -2,7 +2,7 @@
 
 Intended to be used as a common starting point for demo repos for tutorials.
 
-<a href="https://gitpod.io/?autostart=true#https://github.com/hedera-dev/hedera-tutorial-demo-base-template" target="_blank" rel="noreferrer">
+<a href="https://gitpod.io/?autostart=true&editor=code&workspaceClass=g1-standard#https://github.com/hedera-dev/hedera-tutorial-demo-base-template" target="_blank" rel="noreferrer">
   <img src="./img/gitpod-open-button.svg" />
 </a>
 
@@ -20,8 +20,13 @@ Intended to be used as a common starting point for demo repos for tutorials.
     - Fail fast to prevent errors/ head scratching after beginning to do the tutorial
 - Script that automates initialisation and running of JSON-RPC relay
   - Needed if tutorial involves the use of HSCS +
-    EVM developer tools (harhdat/ foundry/ ethers/ viem/ metamask/ et cetera)
+    EVM developer tools (hardhat/ foundry/ ethers/ viem/ metamask/ et cetera)
   - Otherwise, this is not necessary, and can be ignored/ or disabled by the tutorial author
+- Anonymised metrics collection on HCS
+  - Utility function provided to set up an HCS topic to log metrics to
+    - Intended to be invoked by tutorial creator, as a once-off
+  - Utility function provided to record events on said HCS topic
+    - Intended to be invoked by tutorial user, each time they run various scripts during the tutorial
 - Gitpod configuration
   - Allows developer to run tutorial in a cloud development environment (Gitpod)
   - Needed if developer is working from a non-POSIX compliant machine,
@@ -98,20 +103,26 @@ As a tutorial author:
 1. Create a new git remote - e.g. new repo on Github
 1. `git rm remote` of the existing git remote (this repo)
 1. `git add remote` of the new git remote (your new repo)
+1. `npm install`
+1. Update the title and description in `README.md`
+1. Update the URL in `href` for the `<a />` tag surrounding the **Open in Gitpod**
+   SVG button at the top of `README.md`
+1. If you have modified the prompt scripts
+   - Add instructions specific to how to answer the `main` script prompts to
+   the `README.md` or wherever the tutorial text is published
+   - State how to answer based on the **portal flow** vs the **faucet flow**, at minimum
+   - Additionally, state any specific instructions pertaining to the tutorial
 1. Update `util/util.js` to edit values within `DEFAULT_VALUES`
    - `metricsHcsTopicMemo` to a preferred value
    - `metricsAccountId` and `metricsAccountKey` to an account dedicated to metrics logging
 1. Run `./init/06-metrics-topic.js`, then update values within `DEFAULT_VALUES`
    - `metricsHcsTopicId` to the topic that was just created
 1. Add new files necessary for your tutorial
-1. Add instructions specific to how to answer the `main` script prompts to
-   the `README.md` or wherever the tutorial text is published
-   - State how to answer based on the **portal flow** vs the **faucet flow**, at minimum
-   - Additionally, state any specific instructions pertaining to the tutorial
-1. Update the URL in `href` for the `<a />` tag surrounding the **Open in Gitpod**
-   SVG button at the top of `README.md`
 1. `git commit` and `git push` to your new git remote (your new repo)
 1. Follow the steps in "as a tutorial reader" above, and verify that the tutorial is functional in Gitpod.
+1. If there are are issue encountered on Gitpod that do not occur on your computer
+   - Investigate to find the underlying cause, adn fix it
+   - Then reiterate to test if this has been resolved
 
 ## Author
 

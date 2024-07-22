@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="256" height="60">
     <style>
         .text {
-            font-family: "system-ui", "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+            font-family: -apple-system, "system-ui", "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
             font-size: 116px;
             font-weight: 500;
             fill: #ffffff;
