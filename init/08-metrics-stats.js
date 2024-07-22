@@ -2,9 +2,9 @@
 const process = require('node:process');
 const fs = require('node:fs/promises');
 const path = require('node:path');
-// const {
-//     metricsTrackOnHcs,
-// } = require('../util/util.js');
+const {
+    displayDuration,
+} = require('../util/util.js');
 
 async function metricsStats() {
     // read previous stats collected for all scripts
@@ -87,16 +87,25 @@ async function metricsStats() {
         return {
             name: task.scriptId,
             duration: timeToLastAttempt,
+            errors: task.countError,
         };
     });
 
-    console.log({
-        hasCompletedFirstTask,
-        firstTaskName: firstTaskScript.scriptId,
-        timeToHelloWorld,
-        totalCountOfTaskCompletions,
-        completedTaskDurations,
-        incompleteAttemptedTaskDurations,
+    console.log('Has completed a task:', hasCompletedFirstTask);
+    console.log('First task completed ID:', firstTaskScript.scriptId);
+    console.log('Time to first task completion:', timeToHelloWorld);
+    console.log('Total number of task completions:', totalCountOfTaskCompletions);
+    console.log('Completed tasks:');
+    completedTaskDurations.forEach((info, index) => {
+        console.log(`(${index + 1}) Task ID:`, info.name);
+        console.log('Time taken to complete:', displayDuration(info.duration));
+        console.log('Errors prior to completion:', info.errors);
+    });
+    console.log('Attempted but incomplete tasks:', );
+    incompleteAttemptedTaskDurations.forEach((info, index) => {
+        console.log(`(${index + 1}) Task ID:`, info.name);
+        console.log('Time taken for attempts:', displayDuration(info.duration));
+        console.log('Errors thus far:', info.errors);
     });
 }
 

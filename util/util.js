@@ -24,6 +24,16 @@ const ANSI_ESCAPE_CODE_BLUE = '\x1b[34m%s\x1b[0m';
 const HELLIP_CHAR = '…';
 const hashSha256 = crypto.createHash('sha256');
 
+function displayDuration(ms) {
+    const seconds = (ms / 1_000);
+    const minutes = Math.floor(seconds / 60);
+    let out = (seconds % 60).toFixed(1) + 's';
+    if (minutes > 0) {
+        out = `${minutes}min ${out}`;
+    }
+    return out;
+}
+
 async function createLogger({
     scriptId,
     scriptCategory,
@@ -411,6 +421,7 @@ async function metricsTrackOnHcs({
 }
 
 module.exports = {
+    displayDuration,
     createLogger,
     saveLoggerStats,
 
