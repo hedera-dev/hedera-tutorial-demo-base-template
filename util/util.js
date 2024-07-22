@@ -15,14 +15,94 @@ const DEFAULT_VALUES = {
     metricsDotEnvFilePath: path.resolve(__dirname, '../.metrics.env'),
     metricsAccountId: '',
     metricsAccountKey: '',
-    metricsHcsTopicId: '0.0.4576382',
-    metricsHcsTopicMemo: '5MHTSTLC',
+    metricsHcsTopicId: '0.0.4573319',
+    metricsHcsTopicMemo: 'HTDBT',
 };
 
 const ANSI_ESCAPE_CODE_BLUE = '\x1b[34m%s\x1b[0m';
 const HELLIP_CHAR = '…';
+const hashSha256 = crypto.createHash('sha256');
+
+function createLogger({
+    scriptId,
+}) {
+    const logger = {
+        scriptId,
+        step: 0,
+        lastMsg: '',
+        log,
+        logSection,
+        logStart,
+        logComplete,
+        logError,
+        getStartMessage,
+        getCompleteMessage,
+        getErrorMessage,
+    };
+
+    function log(...strings) {
+        logger.step += 1;
+        logger.lastMsg = ([...strings])[0];
+        console.log(...strings);
+    }
+
+    function logSection(...strings) {
+        logger.step += 1;
+        logger.lastMsg = ([...strings])[0];
+        blueLog(...strings);
+    }
+
+    function logStart(...strings) {
+        logSection(...strings);
+        const msg = getStartMessage();
+        metricsTrackOnHcs(msg);
+    }
+
+    function logComplete(...strings) {
+        logSection(...strings);
+        const msg = getCompleteMessage();
+        metricsTrackOnHcs(msg);
+    }
+
+    function logError(...strings) {
+        const msg = getErrorMessage();
+        metricsTrackOnHcs(msg);
+        log(...strings);
+    }
+
+    function getStartMessage() {
+        return {
+            cat: 'start',
+            action: scriptId,
+            detail: '',
+        };
+    }
+
+    function getCompleteMessage() {
+        return {
+            cat: 'complete',
+            action: scriptId,
+            detail: '',
+        };
+    }
+
+    function getErrorMessage() {
+        const lastMsgHashedTruncated = hashSha256
+            .update(logger.lastMsg)
+            .digest('hex')
+            .substring(0, 8);
+        return {
+            cat: 'error',
+            action: scriptId,
+            detail: `${logger.step}-${lastMsgHashedTruncated}`,
+        };
+    }
+
+    return logger;
+}
 
 function blueLog(...strings) {
+    console.log('');
     console.log(ANSI_ESCAPE_CODE_BLUE, '🔵', ...strings, HELLIP_CHAR);
 }
 
@@ -175,8 +255,14 @@ async function metricsTopicCreate() {
 
 const metricsMessages = [];
 
-async function metricsTrackOnHcs(action, detail) {
-    if (typeof action !== 'string' || typeof detail !== 'string') {
+async function metricsTrackOnHcs({
+    cat,
+    action,
+    detail
+}) {
+    if (typeof cat !== 'string' ||
+        typeof action !== 'string' ||
+        typeof detail !== 'string') {
         throw new Error();
     }
     const timeStamp = Date.now();
@@ -197,6 +283,7 @@ async function metricsTrackOnHcs(action, detail) {
         // Save the message in a queue immediately
         const metricsMessage = {
             id: metricsId,
+            cat,
             action,
             detail,
             time: timeStamp,
@@ -237,6 +324,8 @@ async function metricsTrackOnHcs(action, detail) {
 }
 
 module.exports = {
+    createLogger,
+
     ANSI_ESCAPE_CODE_BLUE,
     HELLIP_CHAR,
     blueLog,

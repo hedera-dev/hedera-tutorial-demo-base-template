@@ -128,7 +128,7 @@ As a tutorial author:
 
 For the client
 
-- [ ] Replace `marker` with a custom logger
+- [x] Replace `marker` with a custom logger
   - Reduce clutter within the code
   - Make the collection more systematic and standardised
   - When `error` is logged, the HCS message should include a sequence number + hash of the message

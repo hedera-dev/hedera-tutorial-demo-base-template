@@ -7,22 +7,25 @@ import {
 } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import {
+    createLogger,
+
     blueLog,
     metricsTrackOnHcs,
 } from '../util/util.js';
 
 const scriptId = 'HTDBT-script1Error';
+const logger = createLogger({
+    scriptId,
+});
 let client;
 let marker = 'initial';
 
 async function script1Error() {
-    metricsTrackOnHcs(scriptId, 'run');
-
-    blueLog('Welcome to the 5 minute HTS token launch challenge!');
+    logger.logStart('Welcome to a test script for the Hedera tutorial demo base template!');
 
     // Read in environment variables from `.env` file in parent directory
     dotenv.config({ path: '../.env' });
-    marker = 'read-dotenv';
+    logger.log('Read .env file');
 
     // Initialise the operator account
     const yourName = process.env.YOUR_NAME;
@@ -34,25 +37,22 @@ async function script1Error() {
     const operatorId = AccountId.fromString(operatorIdStr);
     const operatorKey = PrivateKey.fromStringECDSA(operatorKeyStr);
     client = Client.forTestnet().setOperator(operatorId, operatorKey);
-    console.log('Using your name as:', yourName);
-    console.log('Using account:', operatorIdStr);
-    console.log('');
-    marker = 'operator';
+    logger.log('Using your name as:', yourName);
+    logger.log('Using account:', operatorIdStr);
 
-    blueLog('Running the main part of the script');
+    logger.logSection('Running the main part of the script');
+    await (new Promise((resolve) => { setTimeout(resolve, 1_000) }));
     if (!!true) {
         throw new Error('Test error, this was inevitable!');
     }
 
     client.close();
-
-    metricsTrackOnHcs(scriptId, 'complete');
+    logger.logComplete('Test script complete!');
 }
 
 script1Error().catch((ex) => {
     if (client) {
         client.close();
     }
-    console.error(ex);
-    metricsTrackOnHcs(scriptId, `error-after-marker-${marker}`);
+    logger.logError(ex);
 });
