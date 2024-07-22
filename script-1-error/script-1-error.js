@@ -8,14 +8,11 @@ import {
 import dotenv from 'dotenv';
 import {
     createLogger,
-
-    blueLog,
-    metricsTrackOnHcs,
 } from '../util/util.js';
 
-const scriptId = 'HTDBT-script1Error';
 const logger = await createLogger({
-    scriptId,
+    scriptId: 'HTDBT_script1Error',
+    scriptCategory: 'task',
 });
 let client;
 

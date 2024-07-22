@@ -3,3 +3,4 @@
 .env
 .rpcrelay.env
 .metrics.env
+/logger.json

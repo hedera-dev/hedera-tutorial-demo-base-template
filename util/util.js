@@ -26,14 +26,44 @@ const hashSha256 = crypto.createHash('sha256');
 
 async function createLogger({
     scriptId,
+    scriptCategory,
 }) {
+    if (typeof scriptId !== 'string' ||
+        scriptId.length < 2 ||
+        !scriptId.match(/^[a-zA-Z0-9_]+$/)
+    ) {
+        throw new Error('Invalid scriptId');
+    }
+    if (['setup', 'task'].indexOf(scriptCategory) < 0) {
+        throw new Error('Invalid script category');
+    }
+
+    // obtain package.json version number and git commit hash
     const gitRefsHeadMainFilePath = path.resolve(process.cwd(), '../.git/refs/heads/main');
     const gitRefsHeadMain = await fs.readFile(gitRefsHeadMainFilePath);
     const gitCommitHash = gitRefsHeadMain.toString().trim().substring(0, 8);
     const version = `${packageJson.version}-${gitCommitHash}`;
     console.log({ version });
+
+    // read previous stats collected for this script, if any
+    const loggerFilePath = path.resolve(process.cwd(), '../logger.json');
+    const loggerFileJson  = await fs.readFile(loggerFilePath);
+    const loggerFile = JSON.parse(loggerFileJson);
+    const loggerStatsPrev = loggerFile[scriptId] || {
+        firstStart: Number.MAX_SAFE_INTEGER,
+        lastStart: 0,
+        countStart: 0,
+        firstComplete: Number.MAX_SAFE_INTEGER,
+        lastComplete: 0,
+        countComplete: 0,
+        firstError: Number.MAX_SAFE_INTEGER,
+        lastError: 0,
+        countError: 0,
+    };
+
     const logger = {
         scriptId,
+        scriptCategory,
         version,
         step: 0,
         lastMsg: '',
@@ -45,6 +75,7 @@ async function createLogger({
         getStartMessage,
         getCompleteMessage,
         getErrorMessage,
+        stats: loggerStatsPrev,
     };
 
     function log(...strings) {
@@ -62,18 +93,30 @@ async function createLogger({
     function logStart(...strings) {
         logSection(...strings);
         const msg = getStartMessage();
+        logger.stats.lastStart = Math.max(msg.time, logger.stats.lastStart);
+        logger.stats.firstStart = Math.min(msg.time, logger.stats.firstStart);
+        logger.stats.countStart += 1;
+        saveLoggerStats(logger);
         metricsTrackOnHcs(msg);
     }
 
     function logComplete(...strings) {
         logSection(...strings);
         const msg = getCompleteMessage();
+        logger.stats.lastComplete = Math.max(msg.time, logger.stats.lastComplete);
+        logger.stats.firstComplete = Math.min(msg.time, logger.stats.firstComplete);
+        logger.stats.countComplete += 1;
+        saveLoggerStats(logger);
         metricsTrackOnHcs(msg);
     }
 
     function logError(...strings) {
         const msg = getErrorMessage();
         metricsTrackOnHcs(msg);
+        logger.stats.lastError = Math.max(msg.time, logger.stats.lastError);
+        logger.stats.firstError = Math.min(msg.time, logger.stats.firstError);
+        logger.stats.countError += 1;
+        saveLoggerStats(logger);
         log(...strings);
     }
 
@@ -83,6 +126,7 @@ async function createLogger({
             v: logger.version,
             action: scriptId,
             detail: '',
+            time: Date.now(),
         };
     }
 
@@ -92,6 +136,7 @@ async function createLogger({
             v: logger.version,
             action: scriptId,
             detail: '',
+            time: Date.now(),
         };
     }
 
@@ -105,10 +150,23 @@ async function createLogger({
             v: logger.version,
             action: scriptId,
             detail: `${logger.step}-${lastMsgHashedTruncated}`,
+            time: Date.now(),
         };
     }
 
     return logger;
+}
+
+async function saveLoggerStats(logger) {
+    const loggerFilePath = path.resolve(process.cwd(), '../logger.json');
+    const loggerFileJson  = await fs.readFile(loggerFilePath);
+    const loggerFile = JSON.parse(loggerFileJson);
+    loggerFile[logger.scriptId] = {
+        scriptCategory: logger.scriptCategory,
+        ...logger.stats,
+    };
+    const loggerFileJsonUpdated = JSON.stringify(loggerFile, undefined, 2);
+    await fs.writeFile(loggerFilePath, loggerFileJsonUpdated);
 }
 
 function blueLog(...strings) {
@@ -341,6 +399,7 @@ async function metricsTrackOnHcs({
 
 module.exports = {
     createLogger,
+    saveLoggerStats,
 
     ANSI_ESCAPE_CODE_BLUE,
     HELLIP_CHAR,
