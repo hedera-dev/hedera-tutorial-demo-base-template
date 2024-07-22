@@ -16,6 +16,7 @@ async function metricsStats() {
     // find first task script
     let firstSetupScript;
     let firstTaskScript;
+    const completedTasks = [];
     Object.keys(loggerFile).forEach((scriptId) => {
         const scriptStats = loggerFile[scriptId];
         const {
@@ -42,6 +43,9 @@ async function metricsStats() {
                     )) {
                     firstTaskScript = scriptStats;
                 }
+                if (countComplete > 0) {
+                    completedTasks.push(scriptStats);
+                }
                 break;
         }
     });
@@ -55,6 +59,16 @@ async function metricsStats() {
 
     // Timestamp difference between 1st `start` in a task to 1st `complete` in the same task
     // --> Quantify time taken to complete specific task
+    const totalCountOfTaskCompletions = completedTasks.reduce((count, task) => {
+        return count + task.countComplete;
+    }, 0);
+    const completedTaskDurations = completedTasks.map((task) => {
+        timeToComplete = task.firstComplete - task.firstStart;
+        return {
+            name: task.scriptId,
+            duration: timeToComplete,
+        };
+    });
 
     // Count of `error` occurrences between 1st instance of a `start`,
     // and 1st instance of a `complete` in the same task
@@ -67,6 +81,8 @@ async function metricsStats() {
         hasCompletedFirstTask,
         firstTaskName: firstTaskScript.scriptId,
         timeToHelloWorld,
+        totalCountOfTaskCompletions,
+        completedTaskDurations,
     });
 }
 
