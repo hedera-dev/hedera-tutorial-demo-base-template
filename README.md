@@ -124,6 +124,36 @@ As a tutorial author:
    - Investigate to find the underlying cause, adn fix it
    - Then reiterate to test if this has been resolved
 
+## Roadmap
+
+For the client
+
+- [ ] Replace `marker` with a custom logger
+  - Reduce clutter within the code
+  - Make the collection more systematic and standardised
+  - When `error` is logged, the HCS message should include a sequence number + hash of the message
+    - To make it easier to understand *where* the friction points are
+- [ ] HCS message should include version number + git commit hash to be able to trace the version being run against
+- [ ] Add defined categories to the metrics (strings to enums)
+  - Categories: `begin`, `complete`, and `error`
+- [ ] Derive additional statistics using these categories
+  - [ ] Timestamp difference between 1st `begin` in repo to 1st `complete` in script --> Quantify **time to hello world**
+  - [ ] Timestamp difference between 1st `begin` in a script to 1st `complete` in the same script --> Quantify time taken to complete specific task
+  - [ ] Count of `error` occurrences between 1st instance of a `begin`, and 1st instance of a `complete` in the same script --> Quantify number of friction points
+  - [ ] Count of 1st instance of `begin` without any corresponding `complete` for the same script --> Quantify the completion rate (and therefore drop-off rate)
+  - Note that number of friction points and completion rates are intended to be cross-referenced
+- [ ] Display a subset of the statistics collected to the user
+  - Trigger 1: When a `complete` is hit in a script
+  - Trigger 2: Manually invoke a script within `init`
+
+For a server/ CLI tool
+
+- [ ] Ingest HCS topic with these messages
+- [ ] Include simple queries for the above 4 metrics
+- [ ] Output a information that can be plugged into a dashboard
+- [ ] Capability to handle/ span Testnet resets
+- [ ] Separate into different repo/ npm package from the base template
+
 ## Author
 
 [Brendan Graetz](https://blog.bguiz.com/)
