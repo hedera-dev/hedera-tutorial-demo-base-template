@@ -14,11 +14,10 @@ import {
 } from '../util/util.js';
 
 const scriptId = 'HTDBT-script1Error';
-const logger = createLogger({
+const logger = await createLogger({
     scriptId,
 });
 let client;
-let marker = 'initial';
 
 async function script1Error() {
     logger.logStart('Welcome to a test script for the Hedera tutorial demo base template!');

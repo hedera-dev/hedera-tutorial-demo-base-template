@@ -9,6 +9,7 @@ const {
     TopicCreateTransaction,
     TopicMessageSubmitTransaction,
 } = require('@hashgraph/sdk');
+const packageJson = require('../package.json');
 
 const DEFAULT_VALUES = {
     mainDotEnvFilePath: path.resolve(__dirname, '../.env'),
@@ -23,11 +24,17 @@ const ANSI_ESCAPE_CODE_BLUE = '\x1b[34m%s\x1b[0m';
 const HELLIP_CHAR = '…';
 const hashSha256 = crypto.createHash('sha256');
 
-function createLogger({
+async function createLogger({
     scriptId,
 }) {
+    const gitRefsHeadMainFilePath = path.resolve(process.cwd(), '../.git/refs/heads/main');
+    const gitRefsHeadMain = await fs.readFile(gitRefsHeadMainFilePath);
+    const gitCommitHash = gitRefsHeadMain.toString().trim().substring(0, 8);
+    const version = `${packageJson.version}-${gitCommitHash}`;
+    console.log({ version });
     const logger = {
         scriptId,
+        version,
         step: 0,
         lastMsg: '',
         log,
@@ -73,6 +80,7 @@ function createLogger({
     function getStartMessage() {
         return {
             cat: 'start',
+            v: logger.version,
             action: scriptId,
             detail: '',
         };
@@ -81,6 +89,7 @@ function createLogger({
     function getCompleteMessage() {
         return {
             cat: 'complete',
+            v: logger.version,
             action: scriptId,
             detail: '',
         };
@@ -93,6 +102,7 @@ function createLogger({
             .substring(0, 8);
         return {
             cat: 'error',
+            v: logger.version,
             action: scriptId,
             detail: `${logger.step}-${lastMsgHashedTruncated}`,
         };
@@ -257,10 +267,12 @@ const metricsMessages = [];
 
 async function metricsTrackOnHcs({
     cat,
+    v,
     action,
     detail
 }) {
     if (typeof cat !== 'string' ||
+        typeof v !== 'string' ||
         typeof action !== 'string' ||
         typeof detail !== 'string') {
         throw new Error();
@@ -284,6 +296,7 @@ async function metricsTrackOnHcs({
         const metricsMessage = {
             id: metricsId,
             cat,
+            v,
             action,
             detail,
             time: timeStamp,
