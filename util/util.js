@@ -275,7 +275,10 @@ async function metricsTrackOnHcs({
         typeof v !== 'string' ||
         typeof action !== 'string' ||
         typeof detail !== 'string') {
-        throw new Error();
+        throw new Error('Missing params');
+    }
+    if (['start', 'complete', 'error'].indexOf(cat) < 0) {
+        throw new Error('Invalid category:', cat);
     }
     const timeStamp = Date.now();
 

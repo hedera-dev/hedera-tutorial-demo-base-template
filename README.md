@@ -134,7 +134,7 @@ For the client
   - When `error` is logged, the HCS message should include a sequence number + hash of the message
     - To make it easier to understand *where* the friction points are
 - [x] HCS message should include version number + git commit hash to be able to trace the version being run against
-- [ ] Add defined categories to the metrics (strings to enums)
+- [x] Add defined categories to the metrics (strings to enums)
   - Categories: `begin`, `complete`, and `error`
 - [ ] Derive additional statistics using these categories
   - [ ] Timestamp difference between 1st `begin` in repo to 1st `complete` in script --> Quantify **time to hello world**
