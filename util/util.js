@@ -59,6 +59,8 @@ async function createLogger({
         firstError: Number.MAX_SAFE_INTEGER,
         lastError: 0,
         countError: 0,
+        countErrorBeforeFirstComplete: 0,
+        countErrorAfterFirstComplete: 0,
     };
 
     const logger = {
@@ -87,6 +89,7 @@ async function createLogger({
     function logSection(...strings) {
         logger.step += 1;
         logger.lastMsg = ([...strings])[0];
+        console.log('');
         return blueLog(...strings);
     }
 
@@ -118,6 +121,11 @@ async function createLogger({
         logger.stats.lastError = Math.max(msg.time, logger.stats.lastError);
         logger.stats.firstError = Math.min(msg.time, logger.stats.firstError);
         logger.stats.countError += 1;
+        if (logger.stats.countComplete > 0) {
+            logger.stats.countErrorAfterFirstComplete += 1;
+        } else {
+            logger.stats.countErrorBeforeFirstComplete += 1;
+        }
         saveLoggerStats(logger);
         return log(...strings);
     }
@@ -172,7 +180,6 @@ async function saveLoggerStats(logger) {
 }
 
 function blueLog(...strings) {
-    console.log('');
     return console.log(ANSI_ESCAPE_CODE_BLUE, '🔵', ...strings, HELLIP_CHAR);
 }
 

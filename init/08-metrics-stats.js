@@ -66,16 +66,19 @@ async function metricsStats() {
         return count + task.countComplete;
     }, 0);
     const completedTaskDurations = completedTasks.map((task) => {
-        timeToComplete = task.firstComplete - task.firstStart;
+        const timeToComplete = task.firstComplete - task.firstStart;
+        const errorsBeforeFirstComplete = task.countErrorBeforeFirstComplete;
         return {
             name: task.scriptId,
             duration: timeToComplete,
+            errors: errorsBeforeFirstComplete,
         };
     });
 
     // Count of `error` occurrences between 1st instance of a `start`,
     // and 1st instance of a `complete` in the same task
     // --> Quantify number of friction points
+    // NOTE this is included in `errorsBeforeFirstComplete` computed above
 
     // Count of 1st instance of `start` without any corresponding `complete` for the same task
     // --> Quantify the completion rate (and therefore drop-off rate)
