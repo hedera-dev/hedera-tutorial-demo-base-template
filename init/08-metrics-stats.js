@@ -17,6 +17,7 @@ async function metricsStats() {
     let firstSetupScript;
     let firstTaskScript;
     const completedTasks = [];
+    const incompleteTasks = [];
     Object.keys(loggerFile).forEach((scriptId) => {
         const scriptStats = loggerFile[scriptId];
         const {
@@ -45,6 +46,8 @@ async function metricsStats() {
                 }
                 if (countComplete > 0) {
                     completedTasks.push(scriptStats);
+                } else {
+                    incompleteTasks.push(scriptStats);
                 }
                 break;
         }
@@ -76,6 +79,13 @@ async function metricsStats() {
 
     // Count of 1st instance of `start` without any corresponding `complete` for the same task
     // --> Quantify the completion rate (and therefore drop-off rate)
+    const incompleteAttemptedTaskDurations = incompleteTasks.map((task) => {
+        timeToLastAttempt = task.lastError - task.firstStart;
+        return {
+            name: task.scriptId,
+            duration: timeToLastAttempt,
+        };
+    });
 
     console.log({
         hasCompletedFirstTask,
@@ -83,6 +93,7 @@ async function metricsStats() {
         timeToHelloWorld,
         totalCountOfTaskCompletions,
         completedTaskDurations,
+        incompleteAttemptedTaskDurations,
     });
 }
 

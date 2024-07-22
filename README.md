@@ -142,7 +142,7 @@ For the client
   - [x] Timestamp difference between 1st `start` in setup to 1st `complete` in task --> Quantify **time to hello world**
   - [x] Timestamp difference between 1st `start` in a task to 1st `complete` in the same task --> Quantify time taken to complete specific task
   - [ ] Count of `error` occurrences between 1st instance of a `start`, and 1st instance of a `complete` in the same task --> Quantify number of friction points
-  - [ ] Count of 1st instance of `start` without any corresponding `complete` for the same task --> Quantify the completion rate (and therefore drop-off rate)
+  - [x] Count of 1st instance of `start` without any corresponding `complete` for the same task --> Quantify the completion rate (and therefore drop-off rate)
   - Note that number of friction points and completion rates are intended to be cross-referenced
 - [ ] Display a subset of the statistics collected to the user
   - Trigger 1: When a `complete` is hit in a script
