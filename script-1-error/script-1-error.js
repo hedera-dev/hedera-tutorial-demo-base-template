@@ -11,7 +11,7 @@ import {
 } from '../util/util.js';
 
 const logger = await createLogger({
-    scriptId: 'HTDBT_script1Error',
+    scriptId: 'script1Error',
     scriptCategory: 'task',
 });
 let client;
@@ -36,7 +36,7 @@ async function script1Error() {
     logger.log('Using your name as:', yourName);
     logger.log('Using account:', operatorIdStr);
 
-    logger.logSection('Running the main part of the script');
+    await logger.logSectionWithWaitPrompt('Running the main part of the script');
     await (new Promise((resolve) => { setTimeout(resolve, 1_000) }));
     if (!!true) {
         throw new Error('Test error, this was inevitable!');

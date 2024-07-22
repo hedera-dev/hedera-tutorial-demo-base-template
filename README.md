@@ -124,7 +124,7 @@ As a tutorial author:
    - Investigate to find the underlying cause, adn fix it
    - Then reiterate to test if this has been resolved
 
-## Roadmap
+## TODOs
 
 For the client
 
@@ -139,14 +139,28 @@ For the client
 - [x] Collect stats for first/last/count for each log category
   - Persist in a file on disk such that it spans multiple runs of each script (in-memory won't work)
 - [x] Derive additional statistics using these categories
-  - [x] Timestamp difference between 1st `start` in setup to 1st `complete` in task --> Quantify **time to hello world**
-  - [x] Timestamp difference between 1st `start` in a task to 1st `complete` in the same task --> Quantify time taken to complete specific task
+  - [x] Timestamp difference between 1st `start` in setup to 1st `complete` in any task --> Quantify **time to hello world**
+  - [x] Timestamp difference between 1st `start` in setup to lat `complete` in any task --> Quantify **time to full completion**
+  - [x] Timestamp difference between 1st `start` in a task to 1st `complete` in the same task --> Quantify time taken to complete specific task for the first time
+  - [x] Timestamp difference between last `start` in a task to last `complete` in the same task --> Quantify the most recent time taken to complete specific task
   - [x] Count of `error` occurrences between 1st instance of a `start`, and 1st instance of a `complete` in the same task --> Quantify number of friction points
   - [x] Count of 1st instance of `start` without any corresponding `complete` for the same task --> Quantify the completion rate (and therefore drop-off rate)
   - Note that number of friction points and completion rates are intended to be cross-referenced
-- [ ] Display a subset of the statistics collected to the user
+- [x] Display a subset of the statistics collected to the user
   - Trigger 1: When a `complete` is hit in a script
   - Trigger 2: Manually invoke a script within `init/`
+- [x] flag in `logger.json` file to turn off metrics logging on HCS - anonymised already
+- [x] add option to publish metrics summary
+- [x] summary output remove extra newline before the blue circle emoji
+- [x] idea: hit "enter" (readline prompt) to continue to next step for logger
+- [x] idea: automatically exit shell after docker pull of rpc relay image to reduce clutter
+- [x] update `.env.sample` file to include all fields eventually generated
+- [x] update `logger.json.sample` file to include all fields
+- [x] separate time taken to complete first run and time taken to complete most recent run
+- [x] different icons when logging start, complete, error, and summary
+- [x] fix ANSI codes for colour and add BRIGHT (`\x1b[1m`) to make headings bold
+- [x] make printed URLs blue and underlined to emphasise that they are clickable
+- [ ] ideate: commemorative completion task reward
 
 For a server/ CLI tool
 

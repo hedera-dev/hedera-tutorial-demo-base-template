@@ -1,0 +1,11 @@
+{
+  "config": {
+    "scriptCategory": "config",
+    "metricsId": "",
+    "metricsHcsTopicId": "0.0.4573319",
+    "metricsHcsTopicMemo": "HTDBT",
+    "metricsAccountId": "",
+    "metricsAccountKey": "",
+    "metricsHcsDisabled": false
+  }
+}
