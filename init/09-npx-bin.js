@@ -20,6 +20,9 @@ async function hederaTutorialDemoBaseTemplateRun() {
         case 'update-util':
             await updateUtil();
             break;
+        case 'update-init':
+            await updateInit();
+            break;
         default:
             console.error('Unrecognised sub-command:', subCmd);
             break;
@@ -28,6 +31,20 @@ async function hederaTutorialDemoBaseTemplateRun() {
 
 async function updateUtil() {
     await copyFilesFromTemplateToCwd('util', ['util.js']);
+}
+
+async function updateInit() {
+    await copyFilesFromTemplateToCwd('init', [
+        '00-main.sh',
+        '01-dotenv-app.js',
+        '02-dotenv-rpcrelay.js',
+        '03-get-dependencies.sh',
+        '04-rpcrelay-run.sh',
+        '05-rpcrelay-smoketest.sh',
+        '06-metrics-topic.js',
+        '08-metrics-stats.js',
+        '09-npx-bin.js',
+    ]);
 }
 
 async function copyFilesFromTemplateToCwd(subdir, fileNames) {
