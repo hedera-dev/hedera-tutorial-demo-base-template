@@ -11,13 +11,13 @@ import {
 } from '../util/util.js';
 
 const logger = await createLogger({
-    scriptId: 'script1Error',
+    scriptId: '__SCRIPTID__',
     scriptCategory: 'task',
 });
 let client;
 
-async function script1Error() {
-    logger.logStart('Welcome to a test script for the Hedera tutorial demo base template!');
+async function __SCRIPTFUNCTIONNAME__() {
+    logger.logStart('Welcome to the __SCRIPTID__ task!');
 
     // Read in environment variables from `.env` file in parent directory
     dotenv.config({ path: '../.env' });
@@ -39,14 +39,14 @@ async function script1Error() {
     await logger.logSectionWithWaitPrompt('Running the main part of the script');
     await (new Promise((resolve) => { setTimeout(resolve, 1_000) }));
     if (!!true) {
-        throw new Error('Test error, this was inevitable!');
+        throw new Error('Demo error, this was inevitable!');
     }
 
     client.close();
-    logger.logComplete('Test script complete!');
+    logger.logComplete('Demo task complete!');
 }
 
-script1Error().catch((ex) => {
+__SCRIPTFUNCTIONNAME__().catch((ex) => {
     client && client.close();
     logger ? logger.logError(ex) : console.error(ex);
 });
