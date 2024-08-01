@@ -24,19 +24,18 @@ async function __SCRIPTFUNCTIONNAME__() {
     logger.log('Read .env file');
 
     // Initialise the operator account
-    const yourName = process.env.YOUR_NAME;
     const operatorIdStr = process.env.OPERATOR_ACCOUNT_ID;
     const operatorKeyStr = process.env.OPERATOR_ACCOUNT_PRIVATE_KEY;
-    if (!yourName || !operatorIdStr || !operatorKeyStr) {
+    if (!operatorIdStr || !operatorKeyStr) {
         throw new Error('Must set OPERATOR_ACCOUNT_ID and OPERATOR_ACCOUNT_PRIVATE_KEY environment variables');
     }
     const operatorId = AccountId.fromString(operatorIdStr);
     const operatorKey = PrivateKey.fromStringECDSA(operatorKeyStr);
     client = Client.forTestnet().setOperator(operatorId, operatorKey);
-    logger.log('Using your name as:', yourName);
     logger.log('Using account:', operatorIdStr);
 
     await logger.logSectionWithWaitPrompt('Running the main part of the script');
+    console.log('Doing something that takes 1 second.');
     await (new Promise((resolve) => { setTimeout(resolve, 1_000) }));
     if (!!true) {
         throw new Error('Demo error, this was inevitable!');
