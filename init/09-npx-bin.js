@@ -27,9 +27,18 @@ async function hederaTutorialDemoBaseTemplateRun() {
 }
 
 async function updateUtil() {
-    const fromFilePath = path.resolve(__dirname, '../util/util.js');
-    const toFilePath = path.resolve(processCwd, './util/util.js');
-    await fs.copyFile(fromFilePath, toFilePath);
+    await copyFilesFromTemplateToCwd('util', ['util.js']);
+}
+
+async function copyFilesFromTemplateToCwd(subdir, fileNames) {
+    const fromSubdir = path.resolve(__dirname, '..', subdir);
+    const toSubdir = path.resolve(processCwd, subdir);
+    const fileCopyPromises = fileNames.map((fileName) => {
+        const fromFilePath = path.resolve(fromSubdir, fileName);
+        const toFilePath = path.resolve(toSubdir, fileName);
+        return fs.copyFile(fromFilePath, toFilePath);
+    });
+    await Promise.all(fileCopyPromises);
 }
 
 hederaTutorialDemoBaseTemplateRun();
