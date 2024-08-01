@@ -1,7 +1,21 @@
 #!/bin/bash
 
 DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-node ${DIR}/07-metrics-message.js "rpcrelay-pull" "begin"
+
+# install main dependencies
+cd ${DIR}/..
+npm install
+
+if command -v "gp" &> /dev/null
+then
+  gp sync-done get_dependencies_base
+fi
+
+# install additional dependencies
+cd ${DIR}/../hscs-smart-contract
+npm install
+
+cd ${DIR}
 
 # get specific tag name for latest RPC relay
 export RPC_RELAY_VERSION=$( curl -L \
@@ -17,5 +31,3 @@ export RPC_RELAY_DOCKER_IMAGE="ghcr.io/hashgraph/hedera-json-rpc-relay:${RPC_REL
 # run the RPC relay via its docker image
 docker pull \
   "${RPC_RELAY_DOCKER_IMAGE}"
-
-node ${DIR}/07-metrics-message.js "rpcrelay-pull" "complete"
