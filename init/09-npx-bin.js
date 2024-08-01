@@ -46,7 +46,6 @@ async function updateInit() {
         '05-rpcrelay-smoketest.sh',
         '06-metrics-topic.js',
         '08-metrics-stats.js',
-        '09-npx-bin.js',
     ]);
 }
 

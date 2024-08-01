@@ -160,6 +160,8 @@ For the client
 - [x] different icons when logging start, complete, error, and summary
 - [x] fix ANSI codes for colour and add BRIGHT (`\x1b[1m`) to make headings bold
 - [x] make printed URLs blue and underlined to emphasise that they are clickable
+- [x] run tasks via `npx`
+- [x] logger config to disable ANSI
 - [ ] ideate: commemorative completion task reward
 
 For a server/ CLI tool
