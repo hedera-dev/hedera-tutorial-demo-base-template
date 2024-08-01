@@ -6,6 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "hedera-tutorial-demo-base-template": "init/09-npx-bin.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hedera-dev/hedera-tutorial-demo-base-template.git"
