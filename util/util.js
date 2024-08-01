@@ -136,6 +136,7 @@ async function createLogger({
     }
 
     function logStart(...strings) {
+        console.log();
         const retVal = log(...logger.applyAnsi('START', ...strings));
         const msg = getStartMessage();
         logger.stats.lastStart = Math.max(msg.time, logger.stats.lastStart);
@@ -161,6 +162,7 @@ async function createLogger({
     }
 
     function logCompleteImplStart(...strings) {
+        console.log();
         const retVal = log(...logger.applyAnsi('COMPLETE', ...strings));
         const msg = getCompleteMessage();
         logger.stats.lastComplete = Math.max(msg.time, logger.stats.lastComplete);
@@ -172,7 +174,7 @@ async function createLogger({
     async function logCompleteImplEnd(shouldClose) {
         await writeLoggerFile(logger);
         if (logger.scriptCategory === 'task') {
-            await logMetricsSummary();
+            await logMetricsSummary(logger);
         }
         if (shouldClose) {
             await gracefullyCloseClient();
@@ -376,7 +378,7 @@ async function writeLoggerFile(logger) {
     await fs.writeFile(DEFAULT_VALUES.loggerFilePath, loggerFileJsonUpdated);
 }
 
-async function logMetricsSummary() {
+async function logMetricsSummary(logger) {
     // read previous stats collected for all scripts
     const loggerFile = await readLoggerFile();
 

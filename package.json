@@ -4,6 +4,8 @@
   "description": "Intended to be used as a common starting point for demo repos for tutorials",
   "main": "init.js",
   "scripts": {
+    "update-from-base-template": "npx github:hedera-dev/hedera-tutorial-demo-base-template update",
+    "scaffold-task-from-base-template": "npx github:hedera-dev/hedera-tutorial-demo-base-template scaffold-task",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {

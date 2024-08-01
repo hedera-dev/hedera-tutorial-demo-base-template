@@ -17,11 +17,8 @@ async function hederaTutorialDemoBaseTemplateRun() {
     });
     const subCmd = process.argv[2];
     switch (subCmd) {
-        case 'update-util':
-            await updateUtil();
-            break;
-        case 'update-init':
-            await updateInit();
+        case 'update':
+            await update();
             break;
         case 'scaffold-task':
             await scaffoldTask();
@@ -32,11 +29,13 @@ async function hederaTutorialDemoBaseTemplateRun() {
     };
 }
 
-async function updateUtil() {
+async function update() {
+    await copyFilesFromTemplateToCwd('.', [
+        '.env.sample',
+        '.rpcrelay.env.sample',
+        'logger.json.sample',
+    ]);
     await copyFilesFromTemplateToCwd('util', ['util.js']);
-}
-
-async function updateInit() {
     await copyFilesFromTemplateToCwd('init', [
         '00-main.sh',
         '01-dotenv-app.js',

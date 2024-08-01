@@ -3,8 +3,8 @@
     "scriptCategory": "config",
     "ansiDisabled": false,
     "metricsId": "",
-    "metricsHcsTopicId": "0.0.4573319",
-    "metricsHcsTopicMemo": "HTDBT",
+    "metricsHcsTopicId": "",
+    "metricsHcsTopicMemo": "",
     "metricsAccountId": "",
     "metricsAccountKey": "",
     "metricsHcsDisabled": false
