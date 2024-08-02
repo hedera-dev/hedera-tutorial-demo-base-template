@@ -8,13 +8,15 @@ const processCwd = process.cwd();
 const processArgv = process.argv;
 
 async function hederaTutorialDemoBaseTemplateRun() {
-    console.log('hederaTutorialDemoBaseTemplateRun');
-    console.log({
-        __dirname,
-        __filename,
-        processCwd,
-        processArgv,
-    });
+    if (process.env.DEBUG) {
+        console.log('hederaTutorialDemoBaseTemplateRun');
+        console.log({
+            __dirname,
+            __filename,
+            processCwd,
+            processArgv,
+        });
+    }
     const subCmd = process.argv[2];
     switch (subCmd) {
         case 'update':
@@ -30,13 +32,15 @@ async function hederaTutorialDemoBaseTemplateRun() {
 }
 
 async function update() {
-    await copyFilesFromTemplateToCwd('.', [
+    console.log('Updating from upstream base template...');
+    const rootDirFiles = [
         '.env.sample',
         '.rpcrelay.env.sample',
         'logger.json.sample',
-    ]);
-    await copyFilesFromTemplateToCwd('util', ['util.js']);
-    await copyFilesFromTemplateToCwd('init', [
+        '.gitpod.yml',
+    ];
+    const utilDirFiles = [
+        'util.js',
         '00-main.sh',
         '01-dotenv-app.js',
         '02-dotenv-rpcrelay.js',
@@ -45,12 +49,20 @@ async function update() {
         '05-rpcrelay-smoketest.sh',
         '06-metrics-topic.js',
         '08-metrics-stats.js',
-    ]);
+    ];
+    await copyFilesFromTemplateToCwd('.', rootDirFiles);
+    console.log('Copied the following files into the root directory:');
+    console.log(rootDirFiles.map((text) => (`- ${text}`)).join('\n'));
+    await copyFilesFromTemplateToCwd('util', utilDirFiles);
+    console.log('Copied the following files into the "util" directory:');
+    console.log(utilDirFiles.map((text) => (`- ${text}`)).join('\n'));
 }
 
 async function scaffoldTask() {
+    console.log('Generating new task from upstream base template...');
     const taskId = process.argv[3] || 'unnamedTask';
     const scriptFunctionName = 'script' + taskId[0].toUpperCase() + taskId.slice(1);
+    console.log({ taskId, scriptFunctionName });
 
     // mkdir if doesn't exist
     await fs.mkdir(path.resolve(processCwd, taskId), { recursive: true });
@@ -70,6 +82,8 @@ async function scaffoldTask() {
         .replace(/__SCRIPTFUNCTIONNAME__/g, scriptFunctionName);
     await fs.writeFile(toFilePath, fileContents);
     await fs.chmod(toFilePath, '755');
+
+    console.log(`${taskId} generated.`);
 }
 
 async function copyFilesFromTemplateToCwd(subdir, fileNamesFrom, fileNamesTo) {
