@@ -79,7 +79,7 @@ Developer friction points anticipated include:
 
 ## How to use this repo
 
-As a tutorial reader:
+### As a tutorial reader
 
 1. Open the tutorial repo in Gitpod
    - Option A: Click the large **Open in Gitpod** button at the top of the README of the tutorial repo
@@ -97,7 +97,7 @@ As a tutorial reader:
    it does output the latest block from Hedera Testnet
 1. Congratulations, you can now move on to the tutorial proper! 🎉
 
-As a tutorial author:
+### As a tutorial author (initialise)
 
 1. `git clone` this repo
 1. Create a new git remote - e.g. new repo on Github
@@ -112,15 +112,39 @@ As a tutorial author:
    the `README.md` or wherever the tutorial text is published
    - State how to answer based on the **portal flow** vs the **faucet flow**, at minimum
    - Additionally, state any specific instructions pertaining to the tutorial
-1. Update `util/util.js` to edit values within `DEFAULT_VALUES`
-   - `metricsHcsTopicMemo` to a preferred value
-   - `metricsAccountId` and `metricsAccountKey` to an account dedicated to metrics logging
-1. Run `./init/06-metrics-topic.js`, then update values within `DEFAULT_VALUES`
-   - `metricsHcsTopicId` to the topic that was just created
+1. Run `./init/06-metrics-topic.js foobarbaz`,
+   to generate a new HCS topic where metrics will be logged for this tutorial repo,
+   replacing `foobarbaz` with the intended memo for your topic
+1. `git commit` and `git push` to your new git remote (your new repo)
+1. Verify that there are no start up errors in Gitpod.
+1. If there are are issue encountered on Gitpod that do not occur on your computer
+   - Investigate to find the underlying cause, adn fix it
+   - Then reiterate to test if this has been resolved
+
+### As a tutorial author (main content)
+
+Note: **Do not** modify any of the `*.sample` files in the root directory.
+Likewise also do not modify any files inside the `util` directory.
+
 1. Add new files necessary for your tutorial
+   - Optionally you may wish to skip boilerplate steps and scaffold instead
+   - To do so run `npm run scaffold-task-from-base-template foobar`,
+     replacing `foobar` with the intended name of a task in your tutorial
 1. `git commit` and `git push` to your new git remote (your new repo)
 1. Follow the steps in "as a tutorial reader" above, and verify that the tutorial is functional in Gitpod.
-1. If there are are issue encountered on Gitpod that do not occur on your computer
+1. If there are are issues encountered on Gitpod that do not occur on your computer
+   - Investigate to find the underlying cause, adn fix it
+   - Then reiterate to test if this has been resolved
+
+### As a tutorial maintainer
+
+1. In the root dir of the existing demo repo, run `npm run update-from-base-template`
+   - This copies several files from the base template into your existing demo repo
+   - See the implementation in `util/09-npx-bin.js` for the exact list of files that are copied
+1. Be sure to review all `diff`'s prior to committing
+1. `git commit` and `git push` to your new git remote (your new repo)
+1. Follow the steps in "as a tutorial reader" above, and verify that the tutorial is functional in Gitpod.
+1. If there are are issues encountered on Gitpod that do not occur on your computer
    - Investigate to find the underlying cause, adn fix it
    - Then reiterate to test if this has been resolved
 
@@ -162,6 +186,8 @@ For the client
 - [x] make printed URLs blue and underlined to emphasise that they are clickable
 - [x] run tasks via `npx`
 - [x] logger config to disable ANSI
+- [x] npx bin script with `update` and `scaffold-task` sub-commands
+- [x] initialise metrics script also auto-updates config in `logger.json.sample`
 - [ ] ideate: commemorative completion task reward
 
 For a server/ CLI tool
