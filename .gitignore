@@ -1,6 +1,5 @@
 /node_modules
 /package-lock.json
-.env
-.rpcrelay.env
-.metrics.env
+/.env
+/.rpcrelay.env
 /logger.json

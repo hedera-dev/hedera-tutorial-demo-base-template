@@ -35,14 +35,14 @@ async function __SCRIPTFUNCTIONNAME__() {
     logger.log('Using account:', operatorIdStr);
 
     await logger.logSectionWithWaitPrompt('Running the main part of the script');
-    console.log('Doing something that takes 1 second.');
+    logger.log('Doing something that takes 1 second.');
     await (new Promise((resolve) => { setTimeout(resolve, 1_000) }));
     if (!!true) {
         throw new Error('Demo error, this was inevitable!');
     }
 
     client.close();
-    logger.logComplete('Demo task complete!');
+    logger.logComplete('__SCRIPTID__ task complete!');
 }
 
 __SCRIPTFUNCTIONNAME__().catch((ex) => {

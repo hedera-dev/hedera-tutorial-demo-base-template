@@ -38,6 +38,7 @@ async function update() {
         '.rpcrelay.env.sample',
         'logger.json.sample',
         '.gitpod.yml',
+        '.gitignore',
     ];
     const utilDirFiles = [
         'util.js',
@@ -61,29 +62,39 @@ async function update() {
 async function scaffoldTask() {
     console.log('Generating new task from upstream base template...');
     const taskId = process.argv[3] || 'unnamedTask';
-    const scriptFunctionName = 'script' + taskId[0].toUpperCase() + taskId.slice(1);
-    console.log({ taskId, scriptFunctionName });
+    const scriptIdName = taskId
+        .split(/[\s-_]+/g)
+        .map((token, index) => {
+            if (index === 0) {
+                return token; // pass through for first token
+            } else {
+                return token[0].toUpperCase() + token.slice(1);
+            }
+        })
+        .join('');
+    const scriptFunctionName = 'script' + scriptIdName[0].toUpperCase() + scriptIdName.slice(1);
+    console.log({ taskId, scriptIdName, scriptFunctionName });
 
     // mkdir if doesn't exist
-    await fs.mkdir(path.resolve(processCwd, taskId), { recursive: true });
+    await fs.mkdir(path.resolve(processCwd, scriptIdName), { recursive: true });
 
     // verbatim copy of file
     let fromFilePath = path.resolve(__dirname, '..', 'demo-task', 'package.json');
-    let toFilePath = path.resolve(processCwd, taskId, 'package.json');
+    let toFilePath = path.resolve(processCwd, scriptIdName, 'package.json');
     await fs.copyFile(fromFilePath, toFilePath);
 
     // copy of file with replacements
     fromFilePath = path.resolve(__dirname, '..', 'demo-task', 'script-demo.js');
-    toFilePath = path.resolve(processCwd, taskId, `script-${taskId}.js`);
+    toFilePath = path.resolve(processCwd, scriptIdName, `script-${scriptIdName}.js`);
     const fileContentsBuffer = await fs.readFile(fromFilePath);
     let fileContents = fileContentsBuffer.toString('utf8');
     fileContents = fileContents
-        .replace(/__SCRIPTID__/g, taskId)
+        .replace(/__SCRIPTID__/g, scriptIdName)
         .replace(/__SCRIPTFUNCTIONNAME__/g, scriptFunctionName);
     await fs.writeFile(toFilePath, fileContents);
     await fs.chmod(toFilePath, '755');
 
-    console.log(`${taskId} generated.`);
+    console.log(`${scriptIdName} generated.`);
 }
 
 async function copyFilesFromTemplateToCwd(subdir, fileNamesFrom, fileNamesTo) {

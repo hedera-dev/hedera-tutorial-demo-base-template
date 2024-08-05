@@ -104,6 +104,7 @@ Developer friction points anticipated include:
 1. `git rm remote` of the existing git remote (this repo)
 1. `git add remote` of the new git remote (your new repo)
 1. `npm install`
+1. Update name and repository fields in `package.json`
 1. Update the title and description in `README.md`
 1. Update the URL in `href` for the `<a />` tag surrounding the **Open in Gitpod**
    SVG button at the top of `README.md`
