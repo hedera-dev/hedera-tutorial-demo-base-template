@@ -38,7 +38,7 @@ async function update() {
         '.rpcrelay.env.sample',
         'logger.json.sample',
         '.gitpod.yml',
-        '.gitignore',
+        '.gitignore.sample',
     ];
     const utilDirFiles = [
         'util.js',
@@ -57,6 +57,13 @@ async function update() {
     await copyFilesFromTemplateToCwd('util', utilDirFiles);
     console.log('Copied the following files into the "util" directory:');
     console.log(utilDirFiles.map((text) => (`- ${text}`)).join('\n'));
+    const {
+        toDir,
+    } = resolveFromAndToDirs('.');
+    await fs.copyFile(
+        path.resolve(toDir, '.gitignore.sample'),
+        path.resolve(toDir, '.gitignore'),
+    );
 }
 
 async function scaffoldTask() {
@@ -97,13 +104,22 @@ async function scaffoldTask() {
     console.log(`${scriptIdName} generated.`);
 }
 
+function resolveFromAndToDirs(subdir) {
+    return {
+        fromDir: path.resolve(__dirname, '..', subdir),
+        toDir: path.resolve(processCwd, subdir),
+    };
+}
+
 async function copyFilesFromTemplateToCwd(subdir, fileNamesFrom, fileNamesTo) {
-    const fromSubdir = path.resolve(__dirname, '..', subdir);
-    const toSubdir = path.resolve(processCwd, subdir);
+    const {
+        fromDir,
+        toDir,
+    } = resolveFromAndToDirs(subdir);
     const fileCopyPromises = fileNamesFrom.map((fileNameFrom, idx) => {
         const fileNameTo = fileNamesTo?.[idx] || fileNameFrom;
-        const fromFilePath = path.resolve(fromSubdir, fileNameFrom);
-        const toFilePath = path.resolve(toSubdir, fileNameTo);
+        const fromFilePath = path.resolve(fromDir, fileNameFrom);
+        const toFilePath = path.resolve(toDir, fileNameTo);
         return fs.copyFile(fromFilePath, toFilePath);
     });
     await Promise.all(fileCopyPromises);
