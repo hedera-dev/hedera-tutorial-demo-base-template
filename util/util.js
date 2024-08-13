@@ -590,6 +590,19 @@ async function queryAccountByPrivateKey(privateKeyStr) {
     }
 }
 
+function getAbiSummary(abi) {
+    const abiByType = new Map();
+    abi.forEach((item) => {
+        const abiTypeList = abiByType.get(item.type) || [];
+        abiTypeList.push(item.name || '(unnamed)');
+        abiByType.set(item.type, abiTypeList);
+    });
+    return [...abiByType.entries()].map(([type, list]) => {
+        const listNames = list.join(', ');
+        return `${type} (${list.length}): ${listNames}`;
+    }).join('\n');
+}
+
 async function metricsTopicCreate(logger, metricsHcsTopicMemo) {
     const {
         client,
@@ -699,5 +712,6 @@ module.exports = {
     convertTransactionIdForMirrorNodeApi,
     queryAccountByEvmAddress,
     queryAccountByPrivateKey,
+    getAbiSummary,
     metricsTopicCreate,
 };
