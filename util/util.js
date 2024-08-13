@@ -603,6 +603,51 @@ function getAbiSummary(abi) {
     }).join('\n');
 }
 
+async function verifyOnSourcify({
+    deploymentAddress,
+    deploymentTxHash,
+    deploymentContractName,
+    solidityFile,
+    metadataFile,
+}) {
+    const sourcifyEndpoint = 'https://server-verify.hashscan.io/verify'
+
+    const metadataFileName = path.basename(metadataFile);
+    const solidityFileName = path.basename(solidityFile);
+    const metadataFileContents = await fs.readFile(metadataFile);
+    const solidityFileContents = await fs.readFile(solidityFile);
+
+    const postBody = {
+        chain: '296',
+        address: deploymentAddress,
+        creatorTxHash: deploymentTxHash,
+        chosenContract: deploymentContractName,
+        files: {
+            [metadataFileName]: metadataFileContents.toString(),
+            [solidityFileName]: solidityFileContents.toString(),
+        },
+    };
+
+    console.log(`Sending verification request for ${solidityFileName} to ${sourcifyEndpoint}:`);
+
+    const fetchRequest = await fetch(sourcifyEndpoint, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postBody),
+    });
+    const fetchResponse = await fetchRequest.json();
+    if (fetchResponse.error) {
+        console.error(fetchResponse);
+    } else if (fetchResponse.result) {
+        fetchResponse.result.forEach((verifyResult) => {
+            console.log(`Contract ${verifyResult.address} verification status: ${verifyResult.status}`);
+        });
+    }
+}
+
 async function metricsTopicCreate(logger, metricsHcsTopicMemo) {
     const {
         client,
@@ -713,5 +758,6 @@ module.exports = {
     queryAccountByEvmAddress,
     queryAccountByPrivateKey,
     getAbiSummary,
+    verifyOnSourcify,
     metricsTopicCreate,
 };
