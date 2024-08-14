@@ -1,12 +1,13 @@
 {
   "name": "hedera-tutorial-demo-base-template",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Intended to be used as a common starting point for demo repos for tutorials",
   "main": "init.js",
   "scripts": {
     "update-from-base-template": "npx github:hedera-dev/hedera-tutorial-demo-base-template update",
     "scaffold-task-from-base-template": "npx github:hedera-dev/hedera-tutorial-demo-base-template scaffold-task",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
   },
   "bin": {
     "hedera-tutorial-demo-base-template": "util/09-npx-bin.js"
@@ -29,5 +30,8 @@
   "dependencies": {
     "@hashgraph/sdk": "2.48.1",
     "dotenv": "16.4.5"
+  },
+  "devDependencies": {
+    "husky": "9.1.4"
   }
 }

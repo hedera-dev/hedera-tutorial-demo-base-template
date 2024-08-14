@@ -1,0 +1,6 @@
+#!/bin/sh
+# update the .base-template-version-stamp.txt file
+node ./util/09-npx-bin.js "version-stamp"
+
+# ensure that all updates to files made in this pre-commit hook are also included in the commit
+git update-index --again

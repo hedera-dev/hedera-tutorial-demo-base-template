@@ -46,6 +46,14 @@ const CHARS = {
 };
 const hashSha256 = crypto.createHash('sha256');
 
+async function getVersionStamp() {
+    // obtain package.json version number and git commit hash
+    const gitRefsHeadMain = await fs.readFile(DEFAULT_VALUES.gitRefsHeadMainFilePath);
+    const gitCommitHash = gitRefsHeadMain.toString().trim().substring(0, 8);
+    const versionStamp = `${packageJson.version}-${gitCommitHash}`;
+    return versionStamp;
+}
+
 async function createLogger({
     scriptId,
     scriptCategory,
@@ -60,11 +68,7 @@ async function createLogger({
     if (['setup', 'task'].indexOf(scriptCategory) < 0) {
         throw new Error('Invalid script category');
     }
-
-    // obtain package.json version number and git commit hash
-    const gitRefsHeadMain = await fs.readFile(DEFAULT_VALUES.gitRefsHeadMainFilePath);
-    const gitCommitHash = gitRefsHeadMain.toString().trim().substring(0, 8);
-    const version = `${packageJson.version}-${gitCommitHash}`;
+    const version = await getVersionStamp();
     console.log(`${scriptCategory} ${scriptId} ${version}`);
 
     // read previous stats collected for this script, if any
@@ -750,6 +754,7 @@ module.exports = {
     ANSI,
     CHARS,
     displayDuration,
+    getVersionStamp,
     createLogger,
     writeLoggerFile,
     logMetricsSummary,
