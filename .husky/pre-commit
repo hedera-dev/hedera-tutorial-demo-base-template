@@ -1,6 +1,16 @@
 #!/bin/sh
+
 # update the .base-template-version-stamp.txt file
 node ./util/09-npx-bin.js "version-stamp"
+git add ".base-template-version-stamp.txt"
 
-# ensure that all updates to files made in this pre-commit hook are also included in the commit
-git update-index --again
+# format code using prettier
+FILES_FOR_PRETTIER=$(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g')
+if [ -n "${FILES_FOR_PRETTIER}" ] ; then
+    echo "${FILES_FOR_PRETTIER}" | xargs ./node_modules/.bin/prettier --ignore-unknown --write
+    # stage for commit
+    echo "${FILES_FOR_PRETTIER}" | xargs git add
+fi
+
+# # ensure that all updates to files made in this pre-commit hook are also included in the commit
+# git update-index --again
