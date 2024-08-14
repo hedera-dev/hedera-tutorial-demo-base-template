@@ -46,11 +46,11 @@ These are the principles for this repo:
 
 The performance optimisation for speed can be quantified:
 
-- *20-30 minutes*: Manual set up of prerequisites for an a developer new to Hedera technology
-- *5-6 minutes*: Set up via scripts from scratch
-- *1-2 minutes*: Set up via scripts with Docker image + Gitpod
+- _20-30 minutes_: Manual set up of prerequisites for an a developer new to Hedera technology
+- _5-6 minutes_: Set up via scripts from scratch
+- _1-2 minutes_: Set up via scripts with Docker image + Gitpod
   - TODO: custom Docker image instead of base Docker image + steps each run, to further speed this up
-- *Immediate*: Time to start the first step in the script
+- _Immediate_: Time to start the first step in the script
   - Note: The setup still takes 1-2 minutes, but runs in the background and in parallel by design,
     allowing the developer to get on the tutorial steps right away
 
@@ -110,7 +110,7 @@ Developer friction points anticipated include:
    SVG button at the top of `README.md`
 1. If you have modified the prompt scripts
    - Add instructions specific to how to answer the `main` script prompts to
-   the `README.md` or wherever the tutorial text is published
+     the `README.md` or wherever the tutorial text is published
    - State how to answer based on the **portal flow** vs the **faucet flow**, at minimum
    - Additionally, state any specific instructions pertaining to the tutorial
 1. Run `./init/06-metrics-topic.js foobarbaz`,
@@ -157,7 +157,7 @@ For the client
   - Reduce clutter within the code
   - Make the collection more systematic and standardised
   - When `error` is logged, the HCS message should include a sequence number + hash of the message
-    - To make it easier to understand *where* the friction points are
+    - To make it easier to understand _where_ the friction points are
 - [x] HCS message should include version number + git commit hash to be able to trace the version being run against
 - [x] Add defined categories to the metrics (strings to enums)
   - Categories: `begin`, `complete`, and `error`

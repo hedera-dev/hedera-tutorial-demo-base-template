@@ -8,139 +8,143 @@ const { getVersionStamp } = require('../util/util.js');
 
 const processCwd = process.cwd();
 const processArgv = process.argv;
-const baseTemplateVersionStamp = path.resolve(__dirname, '..', '.base-template-version-stamp.txt');
+const baseTemplateVersionStamp = path.resolve(
+  __dirname,
+  '..',
+  '.base-template-version-stamp.txt',
+);
 
 async function hederaTutorialDemoBaseTemplateRun() {
-    if (process.env.DEBUG) {
-        console.log('hederaTutorialDemoBaseTemplateRun');
-        console.log({
-            __dirname,
-            __filename,
-            processCwd,
-            processArgv,
-            baseTemplateVersionStamp,
-        });
-    }
-    const subCmd = process.argv[2];
-    switch (subCmd) {
-        case 'update':
-            await update();
-            break;
-        case 'scaffold-task':
-            await scaffoldTask();
-            break;
-        case 'version-stamp':
-            await versionStamp();
-            break;
-        default:
-            console.error('Unrecognised sub-command:', subCmd);
-            break;
-    };
+  if (process.env.DEBUG) {
+    console.log('hederaTutorialDemoBaseTemplateRun');
+    console.log({
+      __dirname,
+      __filename,
+      processCwd,
+      processArgv,
+      baseTemplateVersionStamp,
+    });
+  }
+  const subCmd = process.argv[2];
+  switch (subCmd) {
+    case 'update':
+      await update();
+      break;
+    case 'scaffold-task':
+      await scaffoldTask();
+      break;
+    case 'version-stamp':
+      await versionStamp();
+      break;
+    default:
+      console.error('Unrecognised sub-command:', subCmd);
+      break;
+  }
 }
 
 async function update() {
-    console.log('Updating from upstream base template...');
-    const rootDirFiles = [
-        '.env.sample',
-        '.rpcrelay.env.sample',
-        'logger.json.sample',
-        '.gitpod.yml',
-        '.gitignore.sample',
-    ];
-    const utilDirFiles = [
-        'util.js',
-        '00-main.sh',
-        '01-dotenv-app.js',
-        '02-dotenv-rpcrelay.js',
-        '03-get-dependencies.sh',
-        '04-rpcrelay-run.sh',
-        '05-rpcrelay-smoketest.sh',
-        '06-metrics-topic.js',
-        '08-metrics-stats.js',
-    ];
-    await copyFilesFromTemplateToCwd('.', rootDirFiles);
-    console.log('Copied the following files into the root directory:');
-    console.log(rootDirFiles.map((text) => (`- ${text}`)).join('\n'));
-    await copyFilesFromTemplateToCwd('util', utilDirFiles);
-    console.log('Copied the following files into the "util" directory:');
-    console.log(utilDirFiles.map((text) => (`- ${text}`)).join('\n'));
-    const {
-        toDir,
-    } = resolveFromAndToDirs('.');
-    await fs.copyFile(
-        path.resolve(toDir, '.gitignore.sample'),
-        path.resolve(toDir, '.gitignore'),
-    );
-    const version = await fs.readFile(baseTemplateVersionStamp);
-    const suggestedGitCommitMessage = `feat: update from upstream base template - ${version}`;
-    const suggestedGitCommitCommand = `git commit -s -S -m "${suggestedGitCommitMessage}"`;
-    console.log('Suggested git commit command:\n', suggestedGitCommitCommand);
+  console.log('Updating from upstream base template...');
+  const rootDirFiles = [
+    '.env.sample',
+    '.rpcrelay.env.sample',
+    'logger.json.sample',
+    '.gitpod.yml',
+    '.gitignore.sample',
+  ];
+  const utilDirFiles = [
+    'util.js',
+    '00-main.sh',
+    '01-dotenv-app.js',
+    '02-dotenv-rpcrelay.js',
+    '03-get-dependencies.sh',
+    '04-rpcrelay-run.sh',
+    '05-rpcrelay-smoketest.sh',
+    '06-metrics-topic.js',
+    '08-metrics-stats.js',
+  ];
+  await copyFilesFromTemplateToCwd('.', rootDirFiles);
+  console.log('Copied the following files into the root directory:');
+  console.log(rootDirFiles.map((text) => `- ${text}`).join('\n'));
+  await copyFilesFromTemplateToCwd('util', utilDirFiles);
+  console.log('Copied the following files into the "util" directory:');
+  console.log(utilDirFiles.map((text) => `- ${text}`).join('\n'));
+  const { toDir } = resolveFromAndToDirs('.');
+  await fs.copyFile(
+    path.resolve(toDir, '.gitignore.sample'),
+    path.resolve(toDir, '.gitignore'),
+  );
+  const version = await fs.readFile(baseTemplateVersionStamp);
+  const suggestedGitCommitMessage = `feat: update from upstream base template - ${version}`;
+  const suggestedGitCommitCommand = `git commit -s -S -m "${suggestedGitCommitMessage}"`;
+  console.log('Suggested git commit command:\n', suggestedGitCommitCommand);
 }
 
 async function scaffoldTask() {
-    console.log('Generating new task from upstream base template...');
-    const taskId = process.argv[3] || 'unnamedTask';
-    const scriptIdName = taskId
-        .split(/[\s-_]+/g)
-        .map((token, index) => {
-            if (index === 0) {
-                return token; // pass through for first token
-            } else {
-                return token[0].toUpperCase() + token.slice(1);
-            }
-        })
-        .join('');
-    const scriptFunctionName = 'script' + scriptIdName[0].toUpperCase() + scriptIdName.slice(1);
-    console.log({ taskId, scriptIdName, scriptFunctionName });
+  console.log('Generating new task from upstream base template...');
+  const taskId = process.argv[3] || 'unnamedTask';
+  const scriptIdName = taskId
+    .split(/[\s-_]+/g)
+    .map((token, index) => {
+      if (index === 0) {
+        return token; // pass through for first token
+      } else {
+        return token[0].toUpperCase() + token.slice(1);
+      }
+    })
+    .join('');
+  const scriptFunctionName =
+    'script' + scriptIdName[0].toUpperCase() + scriptIdName.slice(1);
+  console.log({ taskId, scriptIdName, scriptFunctionName });
 
-    // mkdir if doesn't exist
-    await fs.mkdir(path.resolve(processCwd, scriptIdName), { recursive: true });
+  // mkdir if doesn't exist
+  await fs.mkdir(path.resolve(processCwd, scriptIdName), { recursive: true });
 
-    // verbatim copy of file
-    let fromFilePath = path.resolve(__dirname, '..', 'demo-task', 'package.json');
-    let toFilePath = path.resolve(processCwd, scriptIdName, 'package.json');
-    await fs.copyFile(fromFilePath, toFilePath);
+  // verbatim copy of file
+  let fromFilePath = path.resolve(__dirname, '..', 'demo-task', 'package.json');
+  let toFilePath = path.resolve(processCwd, scriptIdName, 'package.json');
+  await fs.copyFile(fromFilePath, toFilePath);
 
-    // copy of file with replacements
-    fromFilePath = path.resolve(__dirname, '..', 'demo-task', 'script-demo.js');
-    toFilePath = path.resolve(processCwd, scriptIdName, `script-${scriptIdName}.js`);
-    const fileContentsBuffer = await fs.readFile(fromFilePath);
-    let fileContents = fileContentsBuffer.toString('utf8');
-    fileContents = fileContents
-        .replace(/__SCRIPTID__/g, scriptIdName)
-        .replace(/__SCRIPTFUNCTIONNAME__/g, scriptFunctionName);
-    await fs.writeFile(toFilePath, fileContents);
-    await fs.chmod(toFilePath, '755');
+  // copy of file with replacements
+  fromFilePath = path.resolve(__dirname, '..', 'demo-task', 'script-demo.js');
+  toFilePath = path.resolve(
+    processCwd,
+    scriptIdName,
+    `script-${scriptIdName}.js`,
+  );
+  const fileContentsBuffer = await fs.readFile(fromFilePath);
+  let fileContents = fileContentsBuffer.toString('utf8');
+  fileContents = fileContents
+    .replace(/__SCRIPTID__/g, scriptIdName)
+    .replace(/__SCRIPTFUNCTIONNAME__/g, scriptFunctionName);
+  await fs.writeFile(toFilePath, fileContents);
+  await fs.chmod(toFilePath, '755');
 
-    console.log(`${scriptIdName} generated.`);
+  console.log(`${scriptIdName} generated.`);
 }
 
 async function versionStamp() {
-    const version = await getVersionStamp();
-    await fs.writeFile(baseTemplateVersionStamp, version);
-    console.log('Wrote:', baseTemplateVersionStamp);
-    console.log(version);
+  const version = await getVersionStamp();
+  await fs.writeFile(baseTemplateVersionStamp, version);
+  console.log('Wrote:', baseTemplateVersionStamp);
+  console.log(version);
 }
 
 function resolveFromAndToDirs(subdir) {
-    return {
-        fromDir: path.resolve(__dirname, '..', subdir),
-        toDir: path.resolve(processCwd, subdir),
-    };
+  return {
+    fromDir: path.resolve(__dirname, '..', subdir),
+    toDir: path.resolve(processCwd, subdir),
+  };
 }
 
 async function copyFilesFromTemplateToCwd(subdir, fileNamesFrom, fileNamesTo) {
-    const {
-        fromDir,
-        toDir,
-    } = resolveFromAndToDirs(subdir);
-    const fileCopyPromises = fileNamesFrom.map((fileNameFrom, idx) => {
-        const fileNameTo = fileNamesTo?.[idx] || fileNameFrom;
-        const fromFilePath = path.resolve(fromDir, fileNameFrom);
-        const toFilePath = path.resolve(toDir, fileNameTo);
-        return fs.copyFile(fromFilePath, toFilePath);
-    });
-    await Promise.all(fileCopyPromises);
+  const { fromDir, toDir } = resolveFromAndToDirs(subdir);
+  const fileCopyPromises = fileNamesFrom.map((fileNameFrom, idx) => {
+    const fileNameTo = fileNamesTo?.[idx] || fileNameFrom;
+    const fromFilePath = path.resolve(fromDir, fileNameFrom);
+    const toFilePath = path.resolve(toDir, fileNameTo);
+    return fs.copyFile(fromFilePath, toFilePath);
+  });
+  await Promise.all(fileCopyPromises);
 }
 
 hederaTutorialDemoBaseTemplateRun();
