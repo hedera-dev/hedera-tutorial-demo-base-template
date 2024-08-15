@@ -4,15 +4,10 @@ const process = require('node:process');
 const path = require('node:path');
 const fs = require('node:fs/promises');
 
-const { getVersionStamp } = require('../util/util.js');
+const { getBaseTemplateVersionStamp } = require('../util/util.js');
 
 const processCwd = process.cwd();
 const processArgv = process.argv;
-const baseTemplateVersionStamp = path.resolve(
-  __dirname,
-  '..',
-  '.base-template-version-stamp.txt',
-);
 
 async function hederaTutorialDemoBaseTemplateRun() {
   if (process.env.DEBUG) {
@@ -22,7 +17,6 @@ async function hederaTutorialDemoBaseTemplateRun() {
       __filename,
       processCwd,
       processArgv,
-      baseTemplateVersionStamp,
     });
   }
   const subCmd = process.argv[2];
@@ -73,7 +67,7 @@ async function update() {
     path.resolve(toDir, '.gitignore.sample'),
     path.resolve(toDir, '.gitignore'),
   );
-  const version = await fs.readFile(baseTemplateVersionStamp);
+  const version = await getBaseTemplateVersionStamp('main');
   const suggestedGitCommitMessage = `feat: update from upstream base template - ${version}`;
   const suggestedGitCommitCommand = `git commit -s -S -m "${suggestedGitCommitMessage}"`;
   console.log('Suggested git commit command:\n', suggestedGitCommitCommand);
@@ -123,9 +117,7 @@ async function scaffoldTask() {
 }
 
 async function versionStamp() {
-  const version = await getVersionStamp();
-  await fs.writeFile(baseTemplateVersionStamp, version);
-  console.log('Wrote:', baseTemplateVersionStamp);
+  const version = await getBaseTemplateVersionStamp();
   console.log(version);
 }
 

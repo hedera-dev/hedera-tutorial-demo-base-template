@@ -1,4 +1,6 @@
 const crypto = require('node:crypto');
+const util = require('node:util');
+const child_process = require('node:child_process');
 const fs = require('fs/promises');
 const readline = require('node:readline/promises');
 const { stdin, stdout } = require('node:process');
@@ -12,6 +14,9 @@ const {
   TopicMessageSubmitTransaction,
 } = require('@hashgraph/sdk');
 const packageJson = require('../package.json');
+
+const childProcessExec = util.promisify(child_process.exec);
+const hashSha256 = crypto.createHash('sha256');
 
 const DEFAULT_VALUES = {
   mainDotEnvFilePath: path.resolve(__dirname, '../.env'),
@@ -36,6 +41,7 @@ const ANSI = {
   CURSOR_UP_1: '\x1b[1A',
   CURSOR_LEFT_MAX: '\x1b[9999D',
 };
+
 const CHARS = {
   HELLIP: '…',
   START: '🏁',
@@ -44,7 +50,6 @@ const CHARS = {
   ERROR: '❌',
   SUMMARY: '🔢',
 };
-const hashSha256 = crypto.createHash('sha256');
 
 async function getVersionStamp() {
   // obtain package.json version number and git commit hash
@@ -53,6 +58,16 @@ async function getVersionStamp() {
   );
   const gitCommitHash = gitRefsHeadMain.toString().trim().substring(0, 8);
   const versionStamp = `${packageJson.version}-${gitCommitHash}`;
+  return versionStamp;
+}
+
+async function getBaseTemplateVersionStamp(branch = 'main') {
+  const gitLsRemoteOutput = await childProcessExec(
+    `git ls-remote --heads git@github.com:hedera-dev/hedera-tutorial-demo-base-template.git ${branch}`,
+  );
+  const hashFull = gitLsRemoteOutput.stdout.trim().split(/\s+/g)[0];
+  const hashShort = hashFull.substring(0, 8);
+  const versionStamp = `${packageJson.version}-${hashShort}`;
   return versionStamp;
 }
 
@@ -796,6 +811,7 @@ module.exports = {
   CHARS,
   displayDuration,
   getVersionStamp,
+  getBaseTemplateVersionStamp,
   createLogger,
   writeLoggerFile,
   logMetricsSummary,
