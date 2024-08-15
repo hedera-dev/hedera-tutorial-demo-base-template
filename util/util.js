@@ -121,6 +121,7 @@ async function createLogger({
     logError,
     logErrorWithoutClose,
     logSummary,
+    logWaitPrompt,
     gracefullyCloseClient,
     getStartMessage,
     getCompleteMessage,
@@ -144,16 +145,7 @@ async function createLogger({
 
   async function logSectionWithWaitPrompt(...strings) {
     const retVal = logSection(...strings);
-    // readline is used to simply prompt user to hit enter
-    const rlPrompt = readline.createInterface({
-      input: stdin,
-      output: stdout,
-    });
-    await rlPrompt.question('(Hit the "return" key when ready to proceed)');
-    rlPrompt.close();
-    if (!logger?.config?.ansiDisabled) {
-      stdout.write(ANSI.CURSOR_UP_1 + ANSI.CLEAR_LINE + ANSI.CURSOR_LEFT_MAX);
-    }
+    await logWaitPrompt();
     return retVal;
   }
 
@@ -245,6 +237,19 @@ async function createLogger({
       time: Date.now(),
     };
     await metricsTrackOnHcs(logger, msg);
+  }
+
+  async function logWaitPrompt() {
+    // readline is used to simply prompt user to hit enter
+    const rlPrompt = readline.createInterface({
+      input: stdin,
+      output: stdout,
+    });
+    await rlPrompt.question('(Hit the "return" key when ready to proceed)');
+    rlPrompt.close();
+    if (!logger?.config?.ansiDisabled) {
+      stdout.write(ANSI.CURSOR_UP_1 + ANSI.CLEAR_LINE + ANSI.CURSOR_LEFT_MAX);
+    }
   }
 
   async function gracefullyCloseClient() {
@@ -520,6 +525,7 @@ async function logMetricsSummary(logger) {
 
   console.log();
   console.log(...logger.applyAnsi('SUMMARY', 'Summary metrics'));
+  await logger.logWaitPrompt();
 
   console.log('\nHas completed a task:', hasCompletedFirstTask);
   if (hasCompletedFirstTask) {
