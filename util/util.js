@@ -145,6 +145,12 @@ async function createLogger({
 
   async function logSectionWithWaitPrompt(...strings) {
     const retVal = logSection(...strings);
+    const stackLine = new Error().stack
+      .split('at ')[2]
+      .trim()
+      .split(' ')[1]
+      .slice(1, -1);
+    console.log('↪️', stackLine);
     await logWaitPrompt();
     return retVal;
   }
