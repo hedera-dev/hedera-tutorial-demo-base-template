@@ -17,6 +17,8 @@ async function __SCRIPTFUNCTIONNAME__() {
   dotenv.config({ path: '../.env' });
   logger.log('Read .env file');
 
+  await logger.logReminder('This is a reminder');
+
   // Initialise the operator account
   const operatorIdStr = process.env.OPERATOR_ACCOUNT_ID;
   const operatorKeyStr = process.env.OPERATOR_ACCOUNT_PRIVATE_KEY;
