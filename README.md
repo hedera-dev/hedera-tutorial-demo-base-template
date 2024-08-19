@@ -189,10 +189,9 @@ For the client
 - [x] logger config to disable ANSI
 - [x] npx bin script with `update` and `scaffold-task` sub-commands
 - [x] initialise metrics script also auto-updates config in `logger.json.sample`
-- [ ] investigate inconsistencies between account ID and EVM address -> modify SDK to make mirror node queries?
+- [x] investigate inconsistencies between account ID and EVM address -> modify SDK to make mirror node queries?
   - added suggestion here: https://github.com/hashgraph/hedera-sdk-js/issues/2442#issuecomment-2295549639
-  - summary for Simi: https://swirldslabs.slack.com/archives/C076TRA61JS/p1724034724279729?thread_ts=1722848655.724999&cid=C076TRA61JS
-- [ ] append a suffix '(latest)' to the one just completed in summary metrics
+- [x] append a suffix '(latest)' to the one just completed in summary metrics
 - [ ] 'Enter your operator account (hex encoded ECDSA) private key' plus validation of the key and account type
 - [ ] refactor to rename 'logSectionWithWaitPrompt'
 - [ ] add script to run RPC relay via NPM instead of docker

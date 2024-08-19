@@ -576,7 +576,8 @@ async function logMetricsSummary(logger) {
 
   console.log('\nCompleted tasks:', completedTaskDurations.length);
   completedTaskDurations.forEach((info, index) => {
-    console.log(`(${index + 1}) Task ID:`, info.name);
+    const suffix = info.name === lastTaskScript.scriptId ? '(latest)' : '';
+    console.log(`(${index + 1}) Task ID:`, info.name, suffix);
     console.log(
       'Time taken to complete (first):',
       displayDuration(info.duration),
