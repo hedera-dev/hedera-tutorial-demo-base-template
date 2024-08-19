@@ -114,8 +114,8 @@ async function createLogger({
     step: 0,
     lastMsg: '',
     log,
+    logSectionWithoutWaitPrompt,
     logSection,
-    logSectionWithWaitPrompt,
     logReminder,
     logStart,
     logComplete,
@@ -140,13 +140,13 @@ async function createLogger({
     return console.log(...strings);
   }
 
-  function logSection(...strings) {
+  function logSectionWithoutWaitPrompt(...strings) {
     console.log();
     return log(...logger.applyAnsi('SECTION', ...strings));
   }
 
-  async function logSectionWithWaitPrompt(...strings) {
-    const retVal = logSection(...strings);
+  async function logSection(...strings) {
+    const retVal = logSectionWithoutWaitPrompt(...strings);
     const stackLine = new Error()?.stack
       ?.split('at ')?.[2]
       ?.trim()
@@ -301,6 +301,7 @@ async function createLogger({
 
   function getErrorMessage() {
     const lastMsgHashedTruncated = hashSha256
+      .copy()
       .update(logger.lastMsg)
       .digest('hex')
       .substring(0, 8);
@@ -576,7 +577,8 @@ async function logMetricsSummary(logger) {
 
   console.log('\nCompleted tasks:', completedTaskDurations.length);
   completedTaskDurations.forEach((info, index) => {
-    console.log(`(${index + 1}) Task ID:`, info.name);
+    const suffix = info.name === lastTaskScript.scriptId ? '(latest)' : '';
+    console.log(`(${index + 1}) Task ID:`, info.name, suffix);
     console.log(
       'Time taken to complete (first):',
       displayDuration(info.duration),
@@ -682,6 +684,21 @@ async function queryAccountByPrivateKey(privateKeyStr) {
     accountId,
     accountBalance,
   };
+}
+
+function isHexPrivateKey(str) {
+  if (str.length !== 66) {
+    return false;
+  }
+  if (str.slice(0, 2) !== '0x') {
+    return false;
+  }
+  if (!str.match(/^0x[0-9a-f]{64}$/i)) {
+    // note that the 1st 2 checks "fail fast", prior to the more expensive regex check
+    // they aren't strictly necessary
+    return false;
+  }
+  return true;
 }
 
 function getAbiSummary(abi) {
@@ -848,6 +865,7 @@ module.exports = {
   convertTransactionIdForMirrorNodeApi,
   queryAccountByEvmAddress,
   queryAccountByPrivateKey,
+  isHexPrivateKey,
   getAbiSummary,
   verifyOnSourcify,
   metricsTopicCreate,

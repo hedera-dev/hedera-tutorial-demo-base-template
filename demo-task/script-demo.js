@@ -32,7 +32,7 @@ async function __SCRIPTFUNCTIONNAME__() {
   client = Client.forTestnet().setOperator(operatorId, operatorKey);
   logger.log('Using account:', operatorIdStr);
 
-  await logger.logSectionWithWaitPrompt('Running the main part of the script');
+  await logger.logSection('Running the main part of the script');
   logger.log('Doing something that takes 1 second.');
   await new Promise((resolve) => {
     setTimeout(resolve, 1_000);
