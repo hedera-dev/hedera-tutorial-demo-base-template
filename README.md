@@ -193,7 +193,7 @@ For the client
   - added suggestion here: https://github.com/hashgraph/hedera-sdk-js/issues/2442#issuecomment-2295549639
 - [x] append a suffix '(latest)' to the one just completed in summary metrics
 - [x] 'Enter your operator account (hex encoded ECDSA) private key' plus validation of the key and account type
-- [ ] refactor to rename 'logSectionWithWaitPrompt'
+- [x] refactor to rename 'logSectionWithWaitPrompt'
 - [ ] add script to run RPC relay via NPM instead of docker
 - [ ] investigate: docs as code/ SSOT for written tutorial
 - [ ] Q&A for npm pack and !/.gitignore

@@ -114,8 +114,8 @@ async function createLogger({
     step: 0,
     lastMsg: '',
     log,
+    logSectionWithoutWaitPrompt,
     logSection,
-    logSectionWithWaitPrompt,
     logReminder,
     logStart,
     logComplete,
@@ -140,13 +140,13 @@ async function createLogger({
     return console.log(...strings);
   }
 
-  function logSection(...strings) {
+  function logSectionWithoutWaitPrompt(...strings) {
     console.log();
     return log(...logger.applyAnsi('SECTION', ...strings));
   }
 
-  async function logSectionWithWaitPrompt(...strings) {
-    const retVal = logSection(...strings);
+  async function logSection(...strings) {
+    const retVal = logSectionWithoutWaitPrompt(...strings);
     const stackLine = new Error()?.stack
       ?.split('at ')?.[2]
       ?.trim()

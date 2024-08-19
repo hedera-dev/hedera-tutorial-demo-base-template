@@ -332,7 +332,7 @@ async function promptInputs() {
       accounts[0] = operatorAccount;
     }
 
-    logger.logSection('Checking all accounts');
+    logger.logSectionWithoutWaitPrompt('Checking all accounts');
     for (let idx = 0; idx < numAccounts; idx++) {
       const account = accounts[idx];
 
