@@ -142,6 +142,17 @@ async function promptInputs() {
   // to allow for correction before proceeding
   let restart;
   do {
+    if (restart) {
+      console.error(
+        "\n❌ Invalid input values detected, the '.env' file has not been initialised.",
+      );
+      logger.log('Restarting the interactive prompts', CHARS.HELLIP);
+    }
+    logger.logSectionWithoutWaitPrompt(
+      'Please enter values requested, or accept defaults, in the interactive prompts below.',
+    );
+    logger.log("These will be used to initialise the '.env' file.\n");
+
     restart = false;
     let use1stAccountAsOperator = false;
 
@@ -174,7 +185,9 @@ async function promptInputs() {
         isValidatedSeedPhrase = false;
       }
       if (!isValidatedSeedPhrase) {
-        console.error('Specified input is not a valid BIP-39 seed phrase');
+        await logger.logError(
+          'Specified input is not a valid BIP-39 seed phrase',
+        );
         restart = true;
         continue;
       }
@@ -278,7 +291,7 @@ async function promptInputs() {
       operatorKey = inputOperatorKey || operatorKey;
     }
     if (!operatorKey) {
-      console.error('Must specify operator account private key');
+      await logger.logError('Must specify operator account private key');
       restart = true;
       continue;
     }
@@ -291,7 +304,7 @@ async function promptInputs() {
     // A different public key and therefore EVM address will be generated,
     // and when detecting if that account has been funded, will then fail.
     if (!isHexPrivateKey(operatorKey)) {
-      console.error('Must use operator key of hexadecimal format');
+      await logger.logError('Must use operator key of hexadecimal format');
       restart = true;
       continue;
     }
@@ -323,7 +336,7 @@ async function promptInputs() {
       );
     } catch (ex) {
       // Fail fast here, as we know this account is non-functional in its present state
-      console.error(ex.message);
+      await logger.logError(ex.message);
       restart = true;
       continue;
     }

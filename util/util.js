@@ -301,6 +301,7 @@ async function createLogger({
 
   function getErrorMessage() {
     const lastMsgHashedTruncated = hashSha256
+      .copy()
       .update(logger.lastMsg)
       .digest('hex')
       .substring(0, 8);
