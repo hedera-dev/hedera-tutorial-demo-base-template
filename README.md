@@ -192,7 +192,7 @@ For the client
 - [x] investigate inconsistencies between account ID and EVM address -> modify SDK to make mirror node queries?
   - added suggestion here: https://github.com/hashgraph/hedera-sdk-js/issues/2442#issuecomment-2295549639
 - [x] append a suffix '(latest)' to the one just completed in summary metrics
-- [ ] 'Enter your operator account (hex encoded ECDSA) private key' plus validation of the key and account type
+- [x] 'Enter your operator account (hex encoded ECDSA) private key' plus validation of the key and account type
 - [ ] refactor to rename 'logSectionWithWaitPrompt'
 - [ ] add script to run RPC relay via NPM instead of docker
 - [ ] investigate: docs as code/ SSOT for written tutorial

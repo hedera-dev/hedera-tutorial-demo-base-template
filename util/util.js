@@ -685,6 +685,21 @@ async function queryAccountByPrivateKey(privateKeyStr) {
   };
 }
 
+function isHexPrivateKey(str) {
+  if (str.length !== 66) {
+    return false;
+  }
+  if (str.slice(0, 2) !== '0x') {
+    return false;
+  }
+  if (!str.match(/^0x[0-9a-f]{64}$/i)) {
+    // note that the 1st 2 checks "fail fast", prior to the more expensive regex check
+    // they aren't strictly necessary
+    return false;
+  }
+  return true;
+}
+
 function getAbiSummary(abi) {
   const abiByType = new Map();
   abi.forEach((item) => {
@@ -849,6 +864,7 @@ module.exports = {
   convertTransactionIdForMirrorNodeApi,
   queryAccountByEvmAddress,
   queryAccountByPrivateKey,
+  isHexPrivateKey,
   getAbiSummary,
   verifyOnSourcify,
   metricsTopicCreate,

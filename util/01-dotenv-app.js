@@ -17,6 +17,7 @@ const {
   createLogger,
   queryAccountByEvmAddress,
   queryAccountByPrivateKey,
+  isHexPrivateKey,
   CHARS,
 } = require('../util/util.js');
 
@@ -102,7 +103,7 @@ async function getUsableAccount(privateKeyStr, evmAddress) {
   let { accountId, accountBalance, accountEvmAddress } = account;
   if (!accountId) {
     throw new Error(
-      'Must specify an account which exists, and can be derived from the specified private key',
+      'Must specify an account which exists, and can be derived from the specified ECDSA secp256k1 private key',
     );
   }
   if (!accountBalance) {
@@ -248,7 +249,10 @@ async function promptInputs() {
     // - user may opt to specify an account private key
     // - if private key is specified, validation will be performed,
     //   and account ID will be obtained from there (no need to ask user to input)
-    logger.log('Enter your operator account (ECDSA) private key');
+    logger.log('Enter your operator account private key');
+    logger.log(
+      'Note that this must be an ECDSA secp256k1 private key, and hexadecimal encoded.',
+    );
     if (operatorKey) {
       logger.log(`Current: "${operatorKey}"`);
       logger.log('(enter blank to re-use the above value)');
@@ -275,6 +279,19 @@ async function promptInputs() {
     }
     if (!operatorKey) {
       console.error('Must specify operator account private key');
+      restart = true;
+      continue;
+    }
+
+    // Validate that this key is hexadecimal.
+    // Note that if a en EdDSA ED25519 private key is used,
+    // instead of an ECDSA secp256k1 private key,
+    // it is **not possible to detect** this early/ locally.
+    // Rather it will be detected later:
+    // A different public key and therefore EVM address will be generated,
+    // and when detecting if that account has been funded, will then fail.
+    if (!isHexPrivateKey(operatorKey)) {
+      console.error('Must use operator key of hexadecimal format');
       restart = true;
       continue;
     }
