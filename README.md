@@ -195,7 +195,8 @@ For the client
 - [x] 'Enter your operator account (hex encoded ECDSA) private key' plus validation of the key and account type
 - [x] refactor to rename 'logSectionWithWaitPrompt'
 - [x] log errors and restarts more clearly in dotenv setup script
-- [ ] add script to run RPC relay via NPM instead of docker
+- [x] add script to run RPC relay via NPM instead of docker
+- [ ] pre-commit hook to error when changes in 'util' directory are detected in downstream repos
 - [ ] investigate: docs as code/ SSOT for written tutorial
 - [ ] Q&A for npm pack and !/.gitignore
 
