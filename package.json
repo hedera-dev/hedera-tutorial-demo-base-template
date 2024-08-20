@@ -1,6 +1,6 @@
 {
   "name": "hedera-tutorial-demo-base-template",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Intended to be used as a common starting point for demo repos for tutorials",
   "main": "init.js",
   "scripts": {
