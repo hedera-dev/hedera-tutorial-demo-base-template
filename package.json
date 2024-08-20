@@ -7,7 +7,7 @@
     "update-from-base-template": "npx github:hedera-dev/hedera-tutorial-demo-base-template update",
     "scaffold-task-from-base-template": "npx github:hedera-dev/hedera-tutorial-demo-base-template scaffold-task",
     "format": "prettier . --write --cache",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "tape --ignore-pattern 'node_modules/**' '**/*.test.js'",
     "prepare": "husky"
   },
   "bin": {
@@ -34,6 +34,8 @@
   },
   "devDependencies": {
     "husky": "9.1.4",
-    "prettier": "3.3.3"
+    "prettier": "3.3.3",
+    "tap": "21.0.1",
+    "tape": "5.8.1"
   }
 }
