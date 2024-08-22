@@ -8,6 +8,7 @@
     "scaffold-task-from-base-template": "npx github:hedera-dev/hedera-tutorial-demo-base-template scaffold-task",
     "format": "prettier . --write --cache",
     "test": "tape --ignore-pattern 'node_modules/**' '**/*.test.js'",
+    "cover": "nyc tape --ignore-pattern 'node_modules/**' '**/*.test.js' | tap-nyc",
     "prepare": "husky"
   },
   "bin": {
@@ -34,8 +35,10 @@
   },
   "devDependencies": {
     "husky": "9.1.4",
+    "nyc": "17.0.0",
     "prettier": "3.3.3",
     "tap": "21.0.1",
+    "tap-nyc": "1.0.3",
     "tape": "5.8.1"
   }
 }
