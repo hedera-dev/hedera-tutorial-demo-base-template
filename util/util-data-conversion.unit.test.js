@@ -45,17 +45,23 @@ tape(
 tape('should query account by evm address', async (t) => {
   const mockEvmAddress = '0x0000000000000000000000000000000000000000';
 
-  // Mock fetch response
-  restoreOriginalFetch(t);
-  global.fetch = async () => ({
+  // Mock `fetch`
+  const mockFetch = t.capture(global, 'fetch', async () => ({
     json: async () => ({
       account: '0.0.123',
       balance: { balance: 1000 },
       evm_address: mockEvmAddress,
     }),
-  });
+  }));
 
   const result = await queryAccountByEvmAddress(mockEvmAddress);
+
+  const mockFetchInvocation0 = mockFetch()?.[0];
+
+  t.equal(
+    mockFetchInvocation0?.args?.[0],
+    'https://testnet.mirrornode.hedera.com/api/v1/accounts/0x0000000000000000000000000000000000000000?limit=1&order=asc&transactiontype=cryptotransfer&transactions=false',
+  );
 
   t.equal(
     result.accountId,
@@ -81,13 +87,22 @@ tape(
   async (t) => {
     const mockEvmAddress = '0x0000000000000000000000000000000000000000';
 
-    // Mock fetch response with invalid data
-    restoreOriginalFetch(t);
-    global.fetch = async () => ({
-      json: async () => ({ accounts: [] }),
-    });
+    // Mock `fetch`
+    const mockFetch = t.capture(global, 'fetch');
 
     const result = await queryAccountByEvmAddress(mockEvmAddress);
+
+    const mockFetchInvocation0 = mockFetch()?.[0];
+    console.log('mockFetchInvocation0', mockFetchInvocation0);
+    console.log(
+      ' mockFetchInvocation0?.args?.[0]',
+      mockFetchInvocation0?.args?.[0],
+    );
+
+    t.equal(
+      mockFetchInvocation0?.args?.[0],
+      'https://testnet.mirrornode.hedera.com/api/v1/accounts/0x0000000000000000000000000000000000000000?limit=1&order=asc&transactiontype=cryptotransfer&transactions=false',
+    );
 
     t.notOk(
       result.accountId,
@@ -108,11 +123,10 @@ tape(
 // Test: should query account by private key
 tape('should query account by private key', async (t) => {
   const mockPrivateKey =
-    '302e020100300506032b6570042204204bc72bb28d9ab751fef3e3d76241b5ff56b0ad2f240ac671fbaeb9f82d8545de';
+    '0x6cd0462cd96ccaaec7e5fe514a670661a2b3c886b782830e2f2cc32ccb40980c';
 
-  // Mock fetch response
-  restoreOriginalFetch(t);
-  global.fetch = async () => ({
+  // Mock `fetch`
+  const mockFetch = t.capture(global, 'fetch', async () => ({
     json: async () => ({
       accounts: [
         {
@@ -122,9 +136,17 @@ tape('should query account by private key', async (t) => {
         },
       ],
     }),
-  });
+  }));
 
   const result = await queryAccountByPrivateKey(mockPrivateKey);
+
+  const mockFetchInvocation0 = mockFetch()?.[0];
+  console.log('mockFetchInvocation0', mockFetchInvocation0);
+
+  t.equal(
+    mockFetchInvocation0?.args?.[0],
+    'https://testnet.mirrornode.hedera.com/api/v1/accounts?account.publickey=0x0282da859e28f46b36ea4f9068f2bb34c19923cf6de540540d148bc7288ac4d997&balance=true&limit=1&order=desc',
+  );
 
   t.equal(
     result.accountId,
@@ -149,15 +171,24 @@ tape(
   'should error when querying account by private key and mirror node api responds with error',
   async (t) => {
     const mockPrivateKey =
-      '302e020100300506032b6570042204204bc72bb28d9ab751fef3e3d76241b5ff56b0ad2f240ac671fbaeb9f82d8545de';
+      '0x6cd0462cd96ccaaec7e5fe514a670661a2b3c886b782830e2f2cc32ccb40980c';
 
-    // Mock fetch response with invalid data
-    restoreOriginalFetch(t);
-    global.fetch = async () => ({
-      json: async () => ({ accounts: [] }),
-    });
+    // Mock `fetch`
+    const mockFetch = t.capture(global, 'fetch', async () => ({
+      json: async () => ({
+        accounts: [],
+      }),
+    }));
 
     const result = await queryAccountByPrivateKey(mockPrivateKey);
+
+    const mockFetchInvocation0 = mockFetch()?.[0];
+    console.log('mockFetchInvocation0', mockFetchInvocation0);
+
+    t.equal(
+      mockFetchInvocation0?.args?.[0],
+      'https://testnet.mirrornode.hedera.com/api/v1/accounts?account.publickey=0x0282da859e28f46b36ea4f9068f2bb34c19923cf6de540540d148bc7288ac4d997&balance=true&limit=1&order=desc',
+    );
 
     t.notOk(
       result.accountId,
