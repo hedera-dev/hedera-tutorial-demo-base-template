@@ -5,3 +5,5 @@ package-lock.json
 /.rpcrelay.env
 /logger.json
 /rpcrelay
+/nyc-report
+/nyc-tmp
