@@ -328,7 +328,7 @@ async function promptInputs() {
       'If this account has not yet been created or funded, you may do so via',
       ...logger.applyAnsi('URL', 'https://faucet.hedera.com'),
     );
-    logger.log('(Simply enter a blank value to when this account is ready)');
+    logger.log('(Simply enter a blank value when this account is ready)');
     await rlPrompt.question('> '); // discard the response, no use for it
 
     // validate operator account details
