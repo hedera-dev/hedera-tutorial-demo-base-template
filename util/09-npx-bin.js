@@ -44,6 +44,7 @@ async function update() {
     'logger.json.sample',
     '.gitpod.yml',
     '.gitignore.sample',
+    '.prettierrc.js',
   ];
   const utilDirFiles = [
     'util.js',
