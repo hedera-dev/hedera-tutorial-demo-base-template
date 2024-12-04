@@ -30,6 +30,11 @@ async function hederaTutorialDemoBaseTemplateRun() {
     case 'version-stamp':
       await versionStamp();
       break;
+    case 'init-repo':
+      await initRepo();
+      // await update();
+      // await scaffoldTask();
+      break;
     default:
       console.error('Unrecognised sub-command:', subCmd);
       break;
@@ -73,15 +78,19 @@ async function update() {
     path.resolve(toDir, '.gitignore.sample'),
     path.resolve(toDir, '.gitignore'),
   );
+
+  // suggest a git commit command
   const version = await getBaseTemplateVersionStamp('main');
   const suggestedGitCommitMessage = `feat: update from upstream base template - ${version}`;
-  const suggestedGitCommitCommand = `git commit -s -S -m "${suggestedGitCommitMessage}"`;
+  const suggestedGitCommitCommand = `git commit -s -m "${suggestedGitCommitMessage}"`;
   console.log('Suggested git commit command:\n', suggestedGitCommitCommand);
 }
 
 async function scaffoldTask() {
   console.log('Generating new task from upstream base template...');
   const taskId = process.argv[3] || 'unnamedTask';
+
+  // remove separators, then camelCase
   const scriptIdName = taskId
     .split(/[\s-_]+/g)
     .map((token, index) => {
@@ -96,7 +105,7 @@ async function scaffoldTask() {
     'script' + scriptIdName[0].toUpperCase() + scriptIdName.slice(1);
   console.log({ taskId, scriptIdName, scriptFunctionName });
 
-  // mkdir if doesn't exist
+  // mkdir if dir name of scriptId does not yet exist
   await fs.mkdir(path.resolve(processCwd, scriptIdName), { recursive: true });
 
   // verbatim copy of file
@@ -104,7 +113,7 @@ async function scaffoldTask() {
   let toFilePath = path.resolve(processCwd, scriptIdName, 'package.json');
   await fs.copyFile(fromFilePath, toFilePath);
 
-  // copy of file with replacements
+  // make copy of file with replacements, and overwrite in place
   fromFilePath = path.resolve(__dirname, '..', 'demo-task', 'script-demo.js');
   toFilePath = path.resolve(
     processCwd,
@@ -117,6 +126,8 @@ async function scaffoldTask() {
     .replace(/__SCRIPTID__/g, scriptIdName)
     .replace(/__SCRIPTFUNCTIONNAME__/g, scriptFunctionName);
   await fs.writeFile(toFilePath, fileContents);
+
+  // make the script file executable
   await fs.chmod(toFilePath, '755');
 
   console.log(`${scriptIdName} generated.`);
@@ -125,6 +136,52 @@ async function scaffoldTask() {
 async function versionStamp() {
   const version = await getBaseTemplateVersionStamp();
   console.log(version);
+}
+
+async function initRepo() {
+  console.log(
+    'Initialising new repo using hedera-tutorial-demo-base-template...',
+  );
+
+  // mkdir if doesn't exist
+  await fs.mkdir(path.resolve(processCwd, 'util'), { recursive: true });
+  await fs.mkdir(path.resolve(processCwd, 'img'), { recursive: true });
+
+  const { fromDir, toDir } = resolveFromAndToDirs('.');
+  const fileList = [
+    {
+      fromFile: 'README.template.md',
+      toFile: 'README.md',
+    },
+    {
+      fromFile: 'package.template.json',
+      toFile: 'package.json',
+    },
+    {
+      fromFile: 'img/gitpod-open-button.svg',
+      toFile: 'img/gitpod-open-button.svg',
+    },
+  ];
+  const fileCopyPromises = fileList.map(({ fromFile, toFile }) => {
+    const filePathFrom = path.resolve(fromDir, fromFile);
+    const filePathTo = path.resolve(toDir, toFile);
+    // return console.log('fs.copyFile', filePathFrom, filePathTo);
+    return fs.copyFile(filePathFrom, filePathTo);
+  });
+  await Promise.all(fileCopyPromises);
+
+  console.log(
+    'Be sure you edit/ replace all instances of "TODO_*" in the following files:',
+  );
+  fileList.forEach(({ toFile }) => {
+    console.log(`- ${toFile}`);
+  });
+
+  // suggest a git commit command
+  const version = await getBaseTemplateVersionStamp('main');
+  const suggestedGitCommitMessage = `feat: initialise new repo from upstream base template - ${version}`;
+  const suggestedGitCommitCommand = `git commit -s -m "${suggestedGitCommitMessage}"`;
+  console.log('Suggested git commit command:\n', suggestedGitCommitCommand);
 }
 
 function resolveFromAndToDirs(subdir) {
