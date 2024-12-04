@@ -57,12 +57,17 @@ async function update() {
     '06-metrics-topic.js',
     '08-metrics-stats.js',
   ];
+
   await copyFilesFromTemplateToCwd('.', rootDirFiles);
   console.log('Copied the following files into the root directory:');
   console.log(rootDirFiles.map((text) => `- ${text}`).join('\n'));
+
+  // mkdir if doesn't exist
+  await fs.mkdir(path.resolve(processCwd, 'util'), { recursive: true });
   await copyFilesFromTemplateToCwd('util', utilDirFiles);
   console.log('Copied the following files into the "util" directory:');
   console.log(utilDirFiles.map((text) => `- ${text}`).join('\n'));
+
   const { toDir } = resolveFromAndToDirs('.');
   await fs.copyFile(
     path.resolve(toDir, '.gitignore.sample'),
