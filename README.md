@@ -113,7 +113,7 @@ Developer friction points anticipated include:
      the `README.md` or wherever the tutorial text is published
    - State how to answer based on the **portal flow** vs the **faucet flow**, at minimum
    - Additionally, state any specific instructions pertaining to the tutorial
-1. Run `./init/06-metrics-topic.js foobarbaz`,
+1. Run `./util/06-metrics-topic.js foobarbaz`,
    to generate a new HCS topic where metrics will be logged for this tutorial repo,
    replacing `foobarbaz` with the intended memo for your topic
 1. `git commit` and `git push` to your new git remote (your new repo)

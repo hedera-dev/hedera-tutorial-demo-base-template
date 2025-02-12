@@ -170,8 +170,10 @@ async function initRepo() {
   });
   await Promise.all(fileCopyPromises);
 
+  console.log('!! Be sure to set values in logger.json.sample');
+
   console.log(
-    'Be sure you edit/ replace all instances of "TODO_*" in the following files:',
+    '!! Be sure to edit/ replace all instances of "TODO_*" in the following files:',
   );
   fileList.forEach(({ toFile }) => {
     console.log(`- ${toFile}`);

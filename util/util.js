@@ -836,7 +836,7 @@ async function metricsTrackOnHcs(logger, { cat, v, action, detail, time }) {
     metricsMessages.push(metricsMessage);
 
     // Submit metrics message to HCS topic
-    if (!metricsHcsDisabled && client) {
+    if (!metricsHcsDisabled && metricsHcsTopicId && client) {
       do {
         const nextMetricsMessage = metricsMessages.shift();
         // Track directly on HCS
